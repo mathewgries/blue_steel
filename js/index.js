@@ -30,4 +30,4 @@ update = function () {
   player.update();
 };
 
-// setInterval(update, 40);
+setInterval(update, 40);
