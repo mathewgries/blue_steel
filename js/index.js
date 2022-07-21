@@ -21,7 +21,7 @@ renderCanvas = function () {
   ctx.imageSmoothingEnabled = false;
 };
 
-var player = Player("P", WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
+var player = Player(WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
 var currentMap = MapBoard("001", WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
 
 update = function () {

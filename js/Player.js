@@ -1,4 +1,4 @@
-Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
+Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
   var self = {
     name: name,
     mapXPos: mapWidth / 2,
@@ -8,10 +8,17 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     height: TILE_SIZE * SIZE_MULT,
   };
 
+  self.img = {};
+  self.img.walking = new Image();
+  self.img.walking.src = "img/entities/player_walking.png";
+
   self.pressingRight = false;
   self.pressingLeft = false;
   self.pressingDown = false;
   self.pressingUp = false;
+  self.directionMod = 2;
+  self.animationCounter = 0;
+  self.walkingMod = 1;
 
   self.updatePosition = function () {
     if (self.validateKeyPress()) {
@@ -19,30 +26,38 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
       let nextMapYPos = self.mapYPos;
 
       if (self.pressingUp) {
+        self.directionMod = 0;
         nextMapYPos -= self.moveSpd;
         if (self.validateMoveUp(nextMapXPos, nextMapYPos)) {
           self.mapYPos = nextMapYPos;
+          self.updateAnimation();
         }
       }
 
       if (self.pressingDown) {
+        self.directionMod = 2;
         nextMapYPos += self.moveSpd;
         if (self.validateMoveDown(nextMapXPos, nextMapYPos)) {
           self.mapYPos = nextMapYPos;
+          self.updateAnimation();
         }
       }
 
       if (self.pressingRight) {
+        self.directionMod = 3;
         nextMapXPos += self.moveSpd;
         if (self.validateMoveRight(nextMapXPos, nextMapYPos)) {
           self.mapXPos = nextMapXPos;
+          self.updateAnimation();
         }
       }
 
       if (self.pressingLeft) {
+        self.directionMod = 1;
         nextMapXPos -= self.moveSpd;
         if (self.validateMoveLeft(nextMapXPos, nextMapYPos)) {
           self.mapXPos = nextMapXPos;
+          self.updateAnimation();
         }
       }
     }
@@ -66,7 +81,7 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     const topLBGV = currentMap.getGridValue(topLB.gridXId, topLB.gridYId);
     const topRBGV = currentMap.getGridValue(topRB.gridXId, topRB.gridYId);
 
-    if (topLBGV === 1 || topRBGV === 1) {
+    if (self.isNonPlayableTile(topLBGV, topRBGV)) {
       return false;
     } else if ((topLBGV === 2 && topRBGV === 2) || (topLBGV === 3 && topRBGV === 3)) {
       return true;
@@ -98,7 +113,7 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     const botLBGV = currentMap.getGridValue(botLB.gridXId, botLB.gridYId);
     const botRBGV = currentMap.getGridValue(botRB.gridXId, botRB.gridYId);
 
-    if (botLBGV === 1 || botRBGV === 1) {
+    if (self.isNonPlayableTile(botLBGV, botRBGV)) {
       return false;
     } else if ((botLBGV === 2 && botRBGV === 2) || (botLBGV === 3 && botRBGV === 3)) {
       return true;
@@ -130,7 +145,7 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     const topRBGV = currentMap.getGridValue(topRB.gridXId, topRB.gridYId);
     const botRBGV = currentMap.getGridValue(botRB.gridXId, botRB.gridYId);
 
-    if (topRBGV === 1 || botRBGV === 1) {
+    if (self.isNonPlayableTile(topRBGV, botRBGV)) {
       return false;
     } else if ((topRBGV === 2 && botRBGV === 2) || (topRBGV === 3 && botRBGV === 3)) {
       return true;
@@ -162,7 +177,7 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     const topLBGV = currentMap.getGridValue(topLB.gridXId, topLB.gridYId);
     const botLBGV = currentMap.getGridValue(botLB.gridXId, botLB.gridYId);
 
-    if (topLBGV === 1 || botLBGV === 1) {
+    if (self.isNonPlayableTile(topLBGV, botLBGV)) {
       return false;
     } else if ((topLBGV === 2 && botLBGV === 2) || (topLBGV === 3 && botLBGV === 3)) {
       return true;
@@ -184,6 +199,10 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
       }
       return isValid1 && isValid2;
     }
+  };
+
+  self.isNonPlayableTile = function (bumber1Val, bumber2Val) {
+    return bumber1Val === 1 || bumber1Val === 8 || bumber2Val === 1 || bumber2Val === 8;
   };
 
   self.validateTopLeftAngle = function (bumber) {
@@ -275,8 +294,27 @@ Player = function (name, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
 
   self.draw = function () {
     ctx.save();
-    ctx.fillRect(self.mapXPos, self.mapYPos, self.width, self.height);
+    const x = self.mapXPos;
+    const y = self.mapYPos;
+    const frameWidth = self.img.walking.width / 3;
+    const frameHeight = self.img.walking.height / 4;
+    ctx.drawImage(
+      self.img.walking,
+      self.walkingMod * frameWidth,
+      self.directionMod * frameHeight,
+      frameWidth,
+      frameHeight,
+      x,
+      y,
+      self.width,
+      self.height
+    );
     ctx.restore();
+  };
+
+  self.updateAnimation = function () {
+    self.animationCounter += 0.5;
+    self.walkingMod = Math.floor(self.animationCounter) % 3;
   };
 
   self.update = function () {
