@@ -1,6 +1,5 @@
 Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
   var self = {
-    name: name,
     mapXPos: mapWidth / 2,
     mapYPos: mapHeight / 2,
     moveSpd: 7,
@@ -9,8 +8,11 @@ Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
   };
 
   self.img = {};
-  self.img.walking = new Image();
-  self.img.walking.src = "img/entities/player_walking.png";
+  self.img.withoutItems = new Image();
+  self.img.withoutItems.src = "img/entities/player_no_items.png";
+  self.img.withShield = new Image();
+  self.img.withShield.src = "img/entities/player_with_shield.png";
+  self.img.currentImage = self.img.withoutItems;
 
   self.pressingRight = false;
   self.pressingLeft = false;
@@ -48,7 +50,9 @@ Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
         nextMapXPos += self.moveSpd;
         if (self.validateMoveRight(nextMapXPos, nextMapYPos)) {
           self.mapXPos = nextMapXPos;
-          self.updateAnimation();
+          if (!self.pressingDown && !self.pressingUp) {
+            self.updateAnimation();
+          }
         }
       }
 
@@ -57,7 +61,9 @@ Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
         nextMapXPos -= self.moveSpd;
         if (self.validateMoveLeft(nextMapXPos, nextMapYPos)) {
           self.mapXPos = nextMapXPos;
-          self.updateAnimation();
+          if (!self.pressingDown && !self.pressingUp) {
+            self.updateAnimation();
+          }
         }
       }
     }
@@ -296,10 +302,10 @@ Player = function (mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
     ctx.save();
     const x = self.mapXPos;
     const y = self.mapYPos;
-    const frameWidth = self.img.walking.width / 3;
-    const frameHeight = self.img.walking.height / 4;
+    const frameWidth = self.img.currentImage.width / 3;
+    const frameHeight = self.img.currentImage.height / 4;
     ctx.drawImage(
-      self.img.walking,
+      self.img.currentImage,
       self.walkingMod * frameWidth,
       self.directionMod * frameHeight,
       frameWidth,

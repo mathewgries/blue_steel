@@ -1,7 +1,7 @@
 //E8rtJMZ36CZsnQV
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-ctx.font = "30px Arial";
+ctx.font = "80px Arial";
 
 const TILE_SIZE = 16;
 const COLUMNS = 16;
@@ -22,7 +22,7 @@ renderCanvas = function () {
 };
 
 var player = Player(WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
-var currentMap = MapBoard("001", WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
+var currentMap = MapBoard("river_013", WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT);
 
 update = function () {
   renderCanvas();

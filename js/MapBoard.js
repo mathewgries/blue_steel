@@ -5,17 +5,39 @@ MapBoard = function (id, WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT) {
   };
 
   self.map = mapData[id];
-  self.hasEntrances = self.map.hasEntrances;
   self.mapGrid = self.map.mapGrid;
   self.image.src = self.map.imgSrc;
+  self.npc = null;
+
+  self.clearPreviousMapData = function () {
+    self.npc = null;
+  };
 
   self.draw = function () {
     ctx.save();
     ctx.drawImage(self.image, 0, 0, WIDTH, HEIGHT);
+    if (self.map.npcData) {
+      
+      ctx.drawImage(
+        self.npc,
+        WIDTH / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        HEIGHT / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        TILE_SIZE * SIZE_MULT,
+        TILE_SIZE * SIZE_MULT
+      );
+      const metrics = ctx.measureText(self.map.npcData.text);
+      const textWidth = metrics.width;
+      var xPosition = WIDTH / 2 - textWidth;
+      ctx.font = "24px status-bar";
+      ctx.fillStyle = "white";
+      ctx.fillText(self.map.npcData.text, xPosition, 150);
+      
+    }
     ctx.restore();
   };
 
   self.loadOuterWorldMap = function (x, y, w, h) {
+    self.clearPreviousMapData();
     let newMapId = "";
     if (x <= 0) {
       newMapId = self.map.mapWest;
@@ -37,12 +59,23 @@ MapBoard = function (id, WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT) {
   };
 
   self.loadCaveMap = function (caveId) {
+    self.clearPreviousMapData();
     player.mapXPos = WIDTH / 2 - player.width / 2;
     player.mapYPos = HEIGHT - player.height - player.moveSpd;
 
     self.map = mapData[caveId];
     self.mapGrid = self.map.mapGrid;
     self.image.src = self.map.imgSrc;
+    if (self.map.npcData) {
+      const npcData = self.map.npcData;
+      self.npc = new Image();
+      self.npc.src = npcData.imgSrc;
+      const newDiv = document.createElement("div");
+      const content = document.createTextNode(self.npc.text);
+      const canvas = document.getElementById("canvas");
+      newDiv.appendChild(content);
+      canvas.appendChild(newDiv);
+    }
   };
 
   self.exitCaveMap = function () {
@@ -94,7 +127,7 @@ MapBoard = function (id, WIDTH, HEIGHT, TILE_SIZE, SIZE_MULT) {
       if (player.mapYPos === HEIGHT - player.height) {
         self.exitCaveMap();
       }
-    } else if (self.hasEntrances) {
+    } else if (self.map.hasEntrances) {
       const gridPos = player.getGridPos(playerX, playerY);
       if (self.getGridValue(gridPos.gridXId, gridPos.gridYId) === 3) {
         for (let key in self.map.entrances) {
