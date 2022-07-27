@@ -10,6 +10,88 @@
 // 8: Water
 
 mapData = {
+  start_map_001: {
+    id: "start_map_001",
+    type: "outerworld",
+    imgSrc: "./img/maps/outerworld/river_018.png",
+    enemyData: null,
+    hasEntrances: false,
+    mapWest: "start_map_002",
+    mapGrid: [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+      [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+  },
+  start_map_002: {
+    id: "start_map_002",
+    type: "outerworld",
+    imgSrc: "./img/maps/outerworld/start_map_002.png",
+    enemyData: null,
+    hasEntrances: true,
+    entrances: {
+      start_cave: {
+        id: "start_cave",
+        isSecret: false,
+        isOpen: true,
+        x: 4,
+        y: 4,
+      },
+    },
+    mapEast: "start_map_001",
+    mapGrid: [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1],
+      [1, 2, 2, 1, 3, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1],
+      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+  },
+  start_cave: {
+    id: "start_cave",
+    type: "cave",
+    imgSrc: "./img/maps/caves/cave.png",
+    npc: {
+      imgSrc: "./img/npcs/blue_wizard.png",
+      text: "You'll probably die if you don't take this stuff",
+    },
+    itemList: {
+      1: { id: 1, x: 7, y: 6, pickedUp: false },
+      4: { id: 4, x: 8, y: 6, pickedUp: false },
+    },
+    enemyData: null,
+    exitDirection: "down",
+    x: 4,
+    y: 4,
+    caveExit: "start_map_002",
+    mapGrid: [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0],
+      [0, 0, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+    ],
+  },
   "001": {
     id: "001",
     type: "outerworld",
@@ -235,7 +317,9 @@ mapData = {
     id: "river_013",
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/river_013.png",
-    enemyData: null,
+    enemyData: {
+      1: { id: 1, count: 5 },
+    },
     hasEntrances: true,
     entrances: {
       cave_013: {
@@ -267,14 +351,9 @@ mapData = {
     imgSrc: "./img/maps/caves/cave.png",
     npc: {
       imgSrc: "./img/npcs/blue_wizard.png",
-      text: "You'll probably die if you don't take this stuff",
+      text: "Good Luck!",
     },
-    defaultItems: [
-      { id: 1, x: 5, y: 6, pickedUp: false, imgSrc: "img/entities/inventoyItems.png" },
-      { id: 4, x: 8, y: 6, pickedUp: false, imgSrc: "img/entities/inventoyItems.png" },
-    ],
     enemyData: null,
-    hasItem: true,
     exitDirection: "down",
     x: 4,
     y: 4,
@@ -297,7 +376,6 @@ mapData = {
     id: "river_018",
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/river_018.png",
-    enemyData: null,
     hasEntrances: false,
     mapWest: "river_013",
     mapGrid: [

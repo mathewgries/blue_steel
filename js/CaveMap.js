@@ -8,28 +8,6 @@ class CaveMap extends MapBoard {
     this.npcText = this.npc.text;
   }
 
-  drawDefaultItems = function () {
-    this.ctx.save();
-    for (let i = 0; i < this.defaultItems.length; i++) {
-      const item = this.defaultItems[i];
-			console.log(item)
-      let itemImg = new Image();
-      itemImg.src = item.imgSrc;
-      // const imgDim = TILE_SIZE * SIZE_MULT;
-      // if (!item.pickedUp) {
-      //   this.ctx.drawImage(
-      //     itemImg,
-      //     imgDim * item.x,
-      //     imgDim * item.y,
-      //     TILE_SIZE * SIZE_MULT,
-      //     TILE_SIZE * SIZE_MULT
-      //   );
-      // }
-    }
-
-    this.ctx.restore();
-  };
-
   drawNPC = function () {
     this.ctx.save();
     this.ctx.drawImage(
@@ -39,9 +17,6 @@ class CaveMap extends MapBoard {
       TILE_SIZE * SIZE_MULT,
       TILE_SIZE * SIZE_MULT
     );
-    if (this.defaultItems.length > 0) {
-      this.drawDefaultItems();
-    }
     this.ctx.restore();
   };
 
@@ -62,6 +37,9 @@ class CaveMap extends MapBoard {
     }
     if (this.npc.text) {
       this.drawNPCText();
+    }
+    if (this.itemList) {
+      this.drawMapItems();
     }
     this.ctx.restore();
   };

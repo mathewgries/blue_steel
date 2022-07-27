@@ -1,12 +1,12 @@
 //E8rtJMZ36CZsnQV
 const mapCanvas = document.getElementById("mapCanvas");
 const ctxMap = mapCanvas.getContext("2d");
-ctxMap.font = "80px Arial";
+ctxMap.font = "30px Arial";
 let mapWrapper = document.getElementById("map-wrapper");
 
 const inventoryCanvas = document.getElementById("inventoryCanvas");
 const ctxInventory = inventoryCanvas.getContext("2d");
-ctxInventory.font = "80px Arial";
+ctxInventory.font = "30px Arial";
 const inventoryWrapper = document.getElementById("inventory-wrapper");
 
 const TILE_SIZE = 16;
@@ -42,19 +42,34 @@ renderCanvas = function () {
   ctxInventory.imageSmoothingEnabled = false;
 };
 
-const inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT, TILE_SIZE, SIZE_MULT);
-const player = new Player(ctxMap, inventory, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, SIZE_MULT);
-const START_MAP = "river_018";
-let currentMap = new OuterworldMap(
-  START_MAP,
-  ctxMap,
-  0,
-  INV_HEIGHT,
-  MAP_WIDTH,
-  MAP_HEIGHT,
-  TILE_SIZE,
-  SIZE_MULT
-);
+let mapCollection;
+let itemCollection;
+let enemyCollection;
+
+let inventory;
+let player;
+let START_MAP;
+let currentMap;
+
+startGame = function () {
+  mapCollection = mapData;
+  itemCollection = itemData;
+  enemyCollection = {};
+
+  inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT, TILE_SIZE, SIZE_MULT);
+  player = new Player(ctxMap, 115, 5, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, SIZE_MULT);
+  START_MAP = "start_map_001";
+  currentMap = new OuterworldMap(
+    START_MAP,
+    ctxMap,
+    0,
+    INV_HEIGHT,
+    MAP_WIDTH,
+    MAP_HEIGHT,
+    TILE_SIZE,
+    SIZE_MULT
+  );
+};
 
 update = function () {
   const x = player.mapXPos;
@@ -64,9 +79,21 @@ update = function () {
   isMapTransition(x, y, w, h);
 
   renderCanvas();
+
   currentMap.update();
+  for (let key in enemyCollection) {
+    var enemy = enemyCollection[key];
+    enemy.update();
+    var isColliding = testCollision(player, enemy);
+    if (isColliding) {
+      player.hp -= enemy.attackPower;
+    }
+  }
   inventory.update();
   player.update();
+  validateItemPickup(currentMap, player);
 };
+
+startGame();
 
 setInterval(update, 40);

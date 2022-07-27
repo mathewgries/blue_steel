@@ -4,13 +4,13 @@ class OuterworldMap extends MapBoard {
     this.type = "outerworld";
   }
 
-  draw = function () {
-    this.ctx.save();
-    this.ctx.drawImage(this.image, 0, 0, this.width, this.height);
-    this.ctx.restore();
-  };
+  // draw = function () {
+  //   this.ctx.save();
+  //   this.ctx.drawImage(this.image, 0, 0, this.width, this.height);
+  //   this.ctx.restore();
+  // };
 
-  update = function () {
-    this.draw();
-  };
+  // update = function () {
+  //   this.draw();
+  // };
 }
