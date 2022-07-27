@@ -1,10 +1,13 @@
 class Entity {
-  constructor(xPos, yPos, moveSpd, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
+  constructor(type, xPos, yPos, moveSpd, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
+    this.type = type;
+    this.mapWidth = mapWidth;
+    this.mapHeight = mapHeight;
     this.mapXPos = xPos;
     this.mapYPos = yPos;
-    this.moveSpd = moveSpd;
     this.width = TILE_SIZE * SIZE_MULT;
     this.height = TILE_SIZE * SIZE_MULT;
+    this.moveSpd = moveSpd;
     this.directionMod = 2;
     this.animationCounter = 0;
     this.walkingMod = 1;
@@ -15,6 +18,7 @@ class Entity {
     nextMapYPos -= this.moveSpd;
     if (this.validateMoveUp(nextMapXPos, nextMapYPos)) {
       this.mapYPos = nextMapYPos;
+      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
       this.updateAnimation();
     }
   };
@@ -24,6 +28,7 @@ class Entity {
     nextMapYPos += this.moveSpd;
     if (this.validateMoveDown(nextMapXPos, nextMapYPos)) {
       this.mapYPos = nextMapYPos;
+      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
       this.updateAnimation();
     }
   };
@@ -33,6 +38,7 @@ class Entity {
     nextMapXPos += this.moveSpd;
     if (this.validateMoveRight(nextMapXPos, nextMapYPos)) {
       this.mapXPos = nextMapXPos;
+      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
       this.updateAnimation();
     }
   };
@@ -42,6 +48,7 @@ class Entity {
     nextMapXPos -= this.moveSpd;
     if (this.validateMoveLeft(nextMapXPos, nextMapYPos)) {
       this.mapXPos = nextMapXPos;
+      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
       this.updateAnimation();
     }
   };
@@ -212,12 +219,19 @@ class Entity {
     }
   };
 
-  getGridPos = function (mapXPos, mapYPos) {
+  getCenterPos = function () {
     return {
-      gridXId: Math.floor(mapXPos / this.width),
-      gridYId: Math.floor((mapYPos + this.height / 2) / this.height),
-      gridXPos: mapXPos % this.width,
-      gridYPos: (mapYPos + this.height / 2) % this.height,
+      gridXId: Math.floor((this.mapXPos + this.width / 2) / this.width),
+      gridYId: Math.floor((this.mapYPos + this.height / 2) / this.height),
+    };
+  };
+
+  getGridPos = function (x, y) {
+    return {
+      gridXId: Math.floor(x / this.width),
+      gridYId: Math.floor((y + this.height / 2) / this.height),
+      gridXPos: x % this.width,
+      gridYPos: (y + this.height / 2) % this.height,
     };
   };
 
@@ -266,12 +280,12 @@ class Entity {
   };
 
   draw = function () {
-    ctx.save();
+    this.ctx.save();
     const x = this.mapXPos;
     const y = this.mapYPos;
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
-    ctx.drawImage(
+    this.ctx.drawImage(
       this.img.currentImage,
       this.walkingMod * frameWidth,
       this.directionMod * frameHeight,
@@ -282,7 +296,7 @@ class Entity {
       this.width,
       this.height
     );
-    ctx.restore();
+    this.ctx.restore();
   };
 
   updateAnimation = function () {
@@ -292,6 +306,7 @@ class Entity {
 
   update = function () {
     this.updatePosition();
+
     this.draw();
   };
 }
