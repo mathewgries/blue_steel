@@ -15,6 +15,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/river_018.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapWest: "start_map_002",
     mapGrid: [
@@ -36,6 +37,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/start_map_002.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: true,
     entrances: {
       start_cave: {
@@ -65,7 +67,7 @@ mapData = {
     id: "start_cave",
     type: "cave",
     imgSrc: "./img/maps/caves/cave.png",
-    npc: {
+    npcData: {
       imgSrc: "./img/npcs/blue_wizard.png",
       text: "You'll probably die if you don't take this stuff",
     },
@@ -97,6 +99,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/001.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: true,
     entrances: {
       cave_001: {
@@ -128,10 +131,7 @@ mapData = {
     id: "cave_001",
     type: "cave",
     imgSrc: "./img/maps/caves/cave.png",
-    npc: {
-      src: null,
-      text: null,
-    },
+    npcData: null,
     enemyData: null,
     hasEntrances: false,
     exitDirection: "down",
@@ -157,6 +157,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/002.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapNorth: "005",
     mapSouth: "007",
@@ -180,6 +181,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/003.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapNorth: "008",
     mapWest: "006",
@@ -203,6 +205,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/004.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: true,
     entrances: {
       "004_cave": {
@@ -234,6 +237,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/005.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapSouth: "002",
     mapGrid: [
@@ -255,6 +259,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/006.png",
     enemyData: null,
+    npcData: null,
     mapEast: "003",
     mapSouth: "004",
     mapGrid: [
@@ -276,6 +281,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/007.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapNorth: "002",
     mapGrid: [
@@ -297,6 +303,7 @@ mapData = {
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/008.png",
     enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapSouth: "003",
     mapGrid: [
@@ -320,6 +327,7 @@ mapData = {
     enemyData: {
       1: { id: 1, count: 5 },
     },
+    npcData: null,
     hasEntrances: true,
     entrances: {
       cave_013: {
@@ -349,11 +357,11 @@ mapData = {
     id: "cave_013",
     type: "cave",
     imgSrc: "./img/maps/caves/cave.png",
-    npc: {
+    enemyData: null,
+    npcData: {
       imgSrc: "./img/npcs/blue_wizard.png",
       text: "Good Luck!",
     },
-    enemyData: null,
     exitDirection: "down",
     x: 4,
     y: 4,
@@ -376,6 +384,8 @@ mapData = {
     id: "river_018",
     type: "outerworld",
     imgSrc: "./img/maps/outerworld/river_018.png",
+    enemyData: null,
+    npcData: null,
     hasEntrances: false,
     mapWest: "river_013",
     mapGrid: [
