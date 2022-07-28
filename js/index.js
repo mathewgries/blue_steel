@@ -52,16 +52,17 @@ let START_MAP;
 let currentMap;
 
 startGame = function () {
-  mapCollection = mapData;
-  itemCollection = itemData;
+  mapCollection = JSON.parse(JSON.stringify(mapData));
+  itemCollection = JSON.parse(JSON.stringify(itemData));
   enemyCollection = {};
 
   inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT, TILE_SIZE, SIZE_MULT);
   player = new Player(ctxMap, 115, 5, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, SIZE_MULT);
   START_MAP = "start_map_001";
-  currentMap = new OuterworldMap(
+  currentMap = new MapBoard(
     START_MAP,
     ctxMap,
+    "outerworld",
     0,
     INV_HEIGHT,
     MAP_WIDTH,
@@ -72,25 +73,35 @@ startGame = function () {
 };
 
 update = function () {
+  renderCanvas();
+
   const x = player.mapXPos;
   const y = player.mapYPos;
   const w = player.width;
   const h = player.height;
   isMapTransition(x, y, w, h);
-
-  renderCanvas();
-
   currentMap.update();
+
   for (let key in enemyCollection) {
     var enemy = enemyCollection[key];
     enemy.update();
-    var isColliding = testCollision(player, enemy);
-    if (isColliding) {
-      player.hp -= enemy.attackPower;
+    if (enemy.testCollision(player)) {
+      player.processEnemyAttack(enemy);
+    }
+    if (player.pressingAttack && player.testAttack(enemy)) {
+      enemy.hp -= player.attackPower;
+      console.log("STRIKE");
+      if (enemy.hp <= 0) {
+        console.log("DEAD");
+        delete enemyCollection[key];
+      }
     }
   }
+
   inventory.update();
+
   player.update();
+
   validateItemPickup(currentMap, player);
 };
 

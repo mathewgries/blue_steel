@@ -4,8 +4,10 @@ isMapTransition = function (x, y, w, h) {
       loadOuterWorldMap(x, y, w, h);
     } else if (isCaveMapTransition(x, y)) {
       const gridPos = player.getGridPos(x, y);
+
       for (let key in currentMap.map.entrances) {
         const entrance = currentMap.map.entrances[key];
+
         if (entrance.x === gridPos.gridXId && entrance.y === gridPos.gridYId) {
           loadCaveMap(entrance.id);
           break;
@@ -44,9 +46,10 @@ loadOuterWorldMap = function (x, y, w, h) {
     loadEnemies(mapCollection[newMapId]);
   }
 
-  currentMap = new OuterworldMap(
+  currentMap = new MapBoard(
     newMapId,
     ctxMap,
+    "outerworld",
     0,
     INV_HEIGHT,
     MAP_WIDTH,
@@ -72,9 +75,10 @@ loadCaveMap = function (caveId) {
   player.mapXPos = MAP_WIDTH / 2 - player.width / 2;
   player.mapYPos = MAP_HEIGHT - player.height - player.moveSpd;
 
-  currentMap = new CaveMap(
+  currentMap = new MapBoard(
     caveId,
     ctxMap,
+    "cave",
     0,
     INV_HEIGHT,
     MAP_WIDTH,
@@ -122,9 +126,10 @@ exitCaveMap = function () {
     loadEnemies(mapCollection[newMapId].enemyData);
   }
 
-  currentMap = new OuterworldMap(
+  currentMap = new MapBoard(
     newMapId,
     ctxMap,
+    "outerworld",
     0,
     INV_HEIGHT,
     MAP_WIDTH,
@@ -179,11 +184,13 @@ loadEnemies = function (enemyList) {
       const enemy = new Enemy(
         count++,
         ctxMap,
+        enemyInfo.hp,
         enemyInfo.attackPower,
         generateXSpawn(mapWidth),
         generateYSpawn(mapHeight),
         enemyInfo.moveSpd,
         enemyInfo.directionMod,
+				enemyInfo.modCounterMax,
         enemyInfo.imgSrc,
         mapWidth,
         mapHeight,
@@ -195,16 +202,13 @@ loadEnemies = function (enemyList) {
   }
 };
 
-getDistanceBetweenEntity = function (entiy1, entity2) {
-  var vx = entiy1.mapXPos - entity2.mapXPos;
-  var vy = entiy1.mapYPos - entity2.mapYPos;
-
-  return Math.sqrt(vx * vx * vy * vy);
-};
-
-testCollision = function (entiy1, entity2) {
-  var distance = getDistanceBetweenEntity(entiy1, entity2);
-  return distance < 30;
+testCollisionRectRect = function (rect1, rect2) {
+  return (
+    rect1.x <= rect2.x + rect2.width &&
+    rect2.x <= rect1.x + rect1.width &&
+    rect1.y <= rect2.y + rect2.height &&
+    rect2.y <= rect1.y + rect1.height
+  );
 };
 
 generateXSpawn = function (mapWidth) {

@@ -13,6 +13,23 @@ class Entity {
     this.walkingMod = 1;
   }
 
+  testCollision = function (entity2) {
+    //return if colliding (true/false)
+    var rect1 = {
+      x: this.mapXPos - this.width / 2,
+      y: this.mapYPos - this.height / 2,
+      width: this.width,
+      height: this.height,
+    };
+    var rect2 = {
+      x: entity2.mapXPos - entity2.width / 2,
+      y: entity2.mapYPos - entity2.height / 2,
+      width: entity2.width,
+      height: entity2.height,
+    };
+    return testCollisionRectRect(rect1, rect2);
+  };
+
   moveUp = function (nextMapXPos, nextMapYPos) {
     this.directionMod = 0;
     nextMapYPos -= this.moveSpd;

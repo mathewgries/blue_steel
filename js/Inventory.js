@@ -26,7 +26,7 @@ class Inventory {
       swordImg.width / 5,
       swordImg.height,
       515,
-      25,
+      20,
       50,
       70
     );

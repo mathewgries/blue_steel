@@ -3,7 +3,7 @@ class Player extends Entity {
     super("player", mapWidth / 2, mapHeight / 2, 7, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT);
     this.ctx = ctx;
     this.hp = hp;
-		this.attackPower = attackPower;
+    this.attackPower = attackPower;
     this.img = {};
     this.img.withoutItems = new Image();
     this.img.withoutItems.src = "img/entities/player_no_items.png";
@@ -16,8 +16,11 @@ class Player extends Entity {
     this.shield = null;
     this.attackEnabled = false;
     this.attackMod = 0;
+    this.swordCoord = { x: 0, y: 0 };
     this.attackFrameCounter = 0;
-		this.equipedItem = null
+    this.equipedItem = null;
+    this.tookDamage = false;
+    this.damageCounter = 0;
 
     this.pressingRight = false;
     this.pressingLeft = false;
@@ -27,8 +30,50 @@ class Player extends Entity {
     this.attackRelease = true;
   }
 
+  processEnemyAttack = function (entity) {
+    if (!this.tookDamage) {
+      this.hp -= entity.attackPower;
+      this.tookDamage = true;
+      const x = this.mapXPos;
+      const y = this.mapYPos;
+
+      if (entity.mapXPos > this.mapXPos) {
+        this.moveLeft(x, y);
+        entity.updatePosition();
+      } else {
+        this.moveRight(x, y);
+        entity.updatePosition();
+      }
+
+      if (entity.mapYPos > this.mapYPos) {
+        this.moveUp(x, y);
+        entity.updatePosition();
+      } else {
+        this.moveDown(x, y);
+        entity.updatePosition();
+      }
+    }
+  };
+
   enableAttack = function () {
     this.attackEnabled = true;
+  };
+
+  testAttack = function (entity2) {
+    //return if colliding (true/false)
+    var rect1 = {
+      x: this.swordCoord.x - this.width / 2,
+      y: this.swordCoord.y - this.height / 2,
+      width: this.width,
+      height: this.height,
+    };
+    var rect2 = {
+      x: entity2.mapXPos - entity2.width / 2,
+      y: entity2.mapYPos - entity2.height / 2,
+      width: entity2.width,
+      height: entity2.height,
+    };
+    return testCollisionRectRect(rect1, rect2);
   };
 
   updateCurrentImage = function (item) {
@@ -39,26 +84,26 @@ class Player extends Entity {
 
   updatePosition = function () {
     if (this.validateKeyPress()) {
-      let nextMapXPos = this.mapXPos;
-      let nextMapYPos = this.mapYPos;
+      const x = this.mapXPos;
+      const y = this.mapYPos;
 
       if (this.pressingUp) {
-        this.moveUp(nextMapXPos, nextMapYPos);
+        this.moveUp(x, y);
         this.attackMod = 2;
       }
 
       if (this.pressingDown) {
-        this.moveDown(nextMapXPos, nextMapYPos);
+        this.moveDown(x, y);
         this.attackMod = 1;
       }
 
       if (this.pressingRight) {
-        this.moveRight(nextMapXPos, nextMapYPos);
+        this.moveRight(x, y);
         this.attackMod = 3;
       }
 
       if (this.pressingLeft) {
-        this.moveLeft(nextMapXPos, nextMapYPos);
+        this.moveLeft(x, y);
         this.attackMod = 0;
       }
     }
@@ -80,6 +125,7 @@ class Player extends Entity {
     const y = this.mapYPos;
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
+
     this.ctx.drawImage(
       this.img.currentImage,
       this.walkingMod * frameWidth,
@@ -112,29 +158,28 @@ class Player extends Entity {
       this.height
     );
 
-    let nextXGrid;
-    let nextYGrid;
     if (this.attackMod === 0) {
-      nextXGrid = x - TILE_SIZE * SIZE_MULT;
-      nextYGrid = y;
+      this.swordCoord.x = x - TILE_SIZE * SIZE_MULT;
+      this.swordCoord.y = y;
     } else if (this.attackMod === 1) {
-      nextXGrid = x;
-      nextYGrid = y + TILE_SIZE * SIZE_MULT;
+      this.swordCoord.x = x;
+      this.swordCoord.y = y + TILE_SIZE * SIZE_MULT;
     } else if (this.attackMod === 2) {
-      nextXGrid = x;
-      nextYGrid = y - TILE_SIZE * SIZE_MULT;
+      this.swordCoord.x = x;
+      this.swordCoord.y = y - TILE_SIZE * SIZE_MULT;
     } else if (this.attackMod === 3) {
-      nextXGrid = x + TILE_SIZE * SIZE_MULT;
-      nextYGrid = y;
+      this.swordCoord.x = x + TILE_SIZE * SIZE_MULT;
+      this.swordCoord.y = y;
     }
+
     this.ctx.drawImage(
       this.sword.img,
       this.attackMod * frameWidth,
       0,
       frameWidth,
       frameHeight,
-      nextXGrid,
-      nextYGrid,
+      this.swordCoord.x,
+      this.swordCoord.y,
       this.width,
       this.height
     );
@@ -148,9 +193,16 @@ class Player extends Entity {
   };
 
   update = function () {
-		if(this.hp <= 0){
-			startGame()
-		}
+    if (this.hp <= 0) {
+      startGame();
+    }
+    if (this.tookDamage) {
+      this.damageCounter += 1;
+      if (this.damageCounter > 5) {
+        this.tookDamage = false;
+        this.damageCounter = 0;
+      }
+    }
     if (!this.pressingAttack) {
       this.updatePosition();
       this.drawWalking();
