@@ -42,8 +42,8 @@ loadOuterWorldMap = function (x, y, w, h) {
     player.mapYPos = 0 + player.moveSpd;
   }
 
-  if (mapCollection[newMapId].enemydata) {
-    loadEnemies(mapCollection[newMapId]);
+  if (mapCollection[newMapId].enemyData) {
+    loadEnemies(mapCollection[newMapId].enemyData);
   }
 
   currentMap = new MapBoard(

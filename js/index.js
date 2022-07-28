@@ -90,9 +90,7 @@ update = function () {
     }
     if (player.pressingAttack && player.testAttack(enemy)) {
       enemy.hp -= player.attackPower;
-      console.log("STRIKE");
       if (enemy.hp <= 0) {
-        console.log("DEAD");
         delete enemyCollection[key];
       }
     }
