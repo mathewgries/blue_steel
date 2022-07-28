@@ -190,7 +190,6 @@ loadEnemies = function (enemyList) {
         generateYSpawn(mapHeight),
         enemyInfo.moveSpd,
         enemyInfo.directionMod,
-				enemyInfo.modCounterMax,
         enemyInfo.imgSrc,
         mapWidth,
         mapHeight,

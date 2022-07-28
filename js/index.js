@@ -84,15 +84,22 @@ update = function () {
 
   for (let key in enemyCollection) {
     var enemy = enemyCollection[key];
-    enemy.update();
-    if (enemy.testCollision(player)) {
-      player.processEnemyAttack(enemy);
-    }
-    if (player.pressingAttack && player.testAttack(enemy)) {
-      enemy.hp -= player.attackPower;
-      if (enemy.hp <= 0) {
-        delete enemyCollection[key];
+
+    if (!enemy.toRemove) {
+      if (enemy.testCollision(player)) {
+        player.processEnemyAttack(enemy);
       }
+      if (player.pressingAttack && player.testAttack(enemy)) {
+        enemy.hp -= player.attackPower;
+        if (enemy.hp <= 0) {
+          enemy.onDeath();
+        }
+      }
+      enemy.update();
+    } else if (enemy.toRemove && !enemy.doRemove) {
+      enemy.update();
+    } else if (enemy.doRemove) {
+      delete enemyCollection[key];
     }
   }
 
