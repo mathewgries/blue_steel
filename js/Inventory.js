@@ -1,5 +1,5 @@
 class Inventory {
-  constructor(ctx, width, height, TILE_SIZE, SIZE_MULT) {
+  constructor(ctx, width, height) {
     this.ctx = ctx;
     this.hearts = new Image();
     this.hearts.src = "img/entities/player_hearts.png";

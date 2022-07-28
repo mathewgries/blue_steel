@@ -46,17 +46,7 @@ loadOuterWorldMap = function (x, y, w, h) {
     loadEnemies(mapCollection[newMapId].enemyData);
   }
 
-  currentMap = new MapBoard(
-    newMapId,
-    ctxMap,
-    "outerworld",
-    0,
-    INV_HEIGHT,
-    MAP_WIDTH,
-    MAP_HEIGHT,
-    TILE_SIZE,
-    SIZE_MULT
-  );
+  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT, MAP_WIDTH, MAP_HEIGHT);
 };
 
 isCaveMapTransition = function (x, y) {
@@ -75,17 +65,7 @@ loadCaveMap = function (caveId) {
   player.mapXPos = MAP_WIDTH / 2 - player.width / 2;
   player.mapYPos = MAP_HEIGHT - player.height - player.moveSpd;
 
-  currentMap = new MapBoard(
-    caveId,
-    ctxMap,
-    "cave",
-    0,
-    INV_HEIGHT,
-    MAP_WIDTH,
-    MAP_HEIGHT,
-    TILE_SIZE,
-    SIZE_MULT
-  );
+  currentMap = new MapBoard(caveId, ctxMap, "cave", 0, INV_HEIGHT, MAP_WIDTH, MAP_HEIGHT);
 };
 
 isExitCaveMap = function () {
@@ -133,9 +113,7 @@ exitCaveMap = function () {
     0,
     INV_HEIGHT,
     MAP_WIDTH,
-    MAP_HEIGHT,
-    TILE_SIZE,
-    SIZE_MULT
+    MAP_HEIGHT
   );
 
   player.mapXPos = playerX;
@@ -174,8 +152,6 @@ validateItemPickup = function (currentMap, player) {
 };
 
 loadEnemies = function (enemyList) {
-  const mapWidth = TILE_SIZE * SIZE_MULT * MAP_COLUMNS;
-  const mapHeight = TILE_SIZE * SIZE_MULT * MAP_ROWS;
   enemyCollection = {};
   let count = 0;
   for (let key in enemyList) {
@@ -186,13 +162,13 @@ loadEnemies = function (enemyList) {
         ctxMap,
         enemyInfo.hp,
         enemyInfo.attackPower,
-        generateXSpawn(mapWidth),
-        generateYSpawn(mapHeight),
+        generateXSpawn(),
+        generateYSpawn(),
         enemyInfo.moveSpd,
         enemyInfo.directionMod,
         enemyInfo.imgSrc,
-        mapWidth,
-        mapHeight,
+        MAP_WIDTH,
+        MAP_HEIGHT,
         TILE_SIZE,
         SIZE_MULT
       );
@@ -210,10 +186,10 @@ testCollisionRectRect = function (rect1, rect2) {
   );
 };
 
-generateXSpawn = function (mapWidth) {
-  return Math.floor(Math.random() * (mapWidth - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+generateXSpawn = function () {
+  return Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
 };
 
-generateYSpawn = function (mapHeigh) {
-  return Math.floor(Math.random() * (mapHeigh - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+generateYSpawn = function () {
+  return Math.floor(Math.random() * (MAP_HEIGHT - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
 };

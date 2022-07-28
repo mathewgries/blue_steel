@@ -1,26 +1,21 @@
 class MapBoard {
-  constructor(id, ctx, type, mapX, mapY, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
+  constructor(id, ctx, type, mapX, mapY) {
     this.id = id;
     this.ctx = ctx;
     this.type = type;
-
     this.mapX = mapX;
     this.mapY = mapY;
-    this.width = mapWidth;
-    this.height = mapHeight;
-
     this.map = mapCollection[id];
     this.mapGrid = this.map.mapGrid;
-
+    this.dropRating = this.map.dropRating;
+    this.dropRate = this.map.dropRate;
     this.image = new Image();
     this.image.src = this.map.imgSrc;
-
-    this.npc = this.loadNpcData(this.map.npcData);
-
-    this.itemList = this.loadDefaultItems(this.map.itemList);
+    this.npc = this.setNpcData(this.map.npcData);
+    this.itemList = this.setDefaultItems(this.map.itemList);
   }
 
-  loadNpcData = function (npcData) {
+  setNpcData = function (npcData) {
     if (!npcData) {
       return null;
     } else {
@@ -33,7 +28,7 @@ class MapBoard {
     }
   };
 
-  loadDefaultItems = function (itemList) {
+  setDefaultItems = function (itemList) {
     if (itemList) {
       let items = {};
       for (let key in itemList) {
@@ -80,8 +75,8 @@ class MapBoard {
     this.ctx.save();
     this.ctx.drawImage(
       this.npc.img,
-      this.width / 2 - (TILE_SIZE * SIZE_MULT) / 2,
-      this.height / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+      MAP_WIDTH / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+      MAP_HEIGHT / 2 - (TILE_SIZE * SIZE_MULT) / 2,
       TILE_SIZE * SIZE_MULT,
       TILE_SIZE * SIZE_MULT
     );
@@ -91,7 +86,7 @@ class MapBoard {
   drawNPCText = function () {
     const metrics = this.ctx.measureText(this.npc.text);
     const textWidth = metrics.width;
-    var xPosition = this.width / 2 - textWidth;
+    var xPosition = MAP_WIDTH / 2 - textWidth;
     this.ctx.font = "24px status-bar";
     this.ctx.fillStyle = "white";
     this.ctx.fillText(this.npc.text, xPosition, 200);
@@ -99,7 +94,7 @@ class MapBoard {
 
   draw = function () {
     this.ctx.save();
-    this.ctx.drawImage(this.image, 0, 0, this.width, this.height);
+    this.ctx.drawImage(this.image, 0, 0, MAP_WIDTH, MAP_HEIGHT);
     if (this.npc) {
       this.drawNPC();
       this.drawNPCText();

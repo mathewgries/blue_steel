@@ -327,6 +327,8 @@ mapData = {
     enemyData: {
       1: { id: 1, count: 5 },
     },
+		dropRating: 5,
+		dropRate: 5,
     npcData: null,
     hasEntrances: true,
     entrances: {

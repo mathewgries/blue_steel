@@ -56,19 +56,15 @@ startGame = function () {
   itemCollection = JSON.parse(JSON.stringify(itemData));
   enemyCollection = {};
 
-  inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT, TILE_SIZE, SIZE_MULT);
-  player = new Player(ctxMap, 115, 5, MAP_WIDTH, MAP_HEIGHT, TILE_SIZE, SIZE_MULT);
+  inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT);
+  player = new Player(ctxMap, 115, 5);
   START_MAP = "start_map_001";
   currentMap = new MapBoard(
     START_MAP,
     ctxMap,
     "outerworld",
     0,
-    INV_HEIGHT,
-    MAP_WIDTH,
-    MAP_HEIGHT,
-    TILE_SIZE,
-    SIZE_MULT
+    INV_HEIGHT
   );
 };
 

@@ -1,8 +1,6 @@
 class Entity {
-  constructor(type, xPos, yPos, moveSpd, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
+  constructor(type, xPos, yPos, moveSpd) {
     this.type = type;
-    this.mapWidth = mapWidth;
-    this.mapHeight = mapHeight;
     this.mapXPos = xPos;
     this.mapYPos = yPos;
     this.width = TILE_SIZE * SIZE_MULT;

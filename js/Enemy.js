@@ -1,20 +1,6 @@
 class Enemy extends Entity {
-  constructor(
-    id,
-    ctx,
-    hp,
-    attackPower,
-    xPos,
-    yPos,
-    moveSpd,
-    directionMod,
-    imgSrc,
-    mapWidth,
-    mapHeight,
-    TILE_SIZE,
-    SIZE_MULT
-  ) {
-    super("enemy", xPos, yPos, moveSpd, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT);
+  constructor(id, ctx, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+    super("enemy", xPos, yPos, moveSpd);
     this.id = id;
     this.hp = hp;
     this.attackPower = attackPower;
@@ -48,11 +34,11 @@ class Enemy extends Entity {
     modChangeX = this.randomDirectionMod() < this.directionMod * 0.0125 ? true : false;
     modChangeY = this.randomDirectionMod() < this.directionMod * 0.0125 ? true : false;
 
-    if (this.mapXPos <= 0 || this.mapXPos >= this.mapWidth - this.width || modChangeX) {
+    if (this.mapXPos <= 0 || this.mapXPos >= MAP_WIDTH - this.width || modChangeX) {
       this.moveSpdX *= -1;
     }
 
-    if (this.mapYPos <= 0 || this.mapYPos >= this.mapHeight - this.height || modChangeY) {
+    if (this.mapYPos <= 0 || this.mapYPos >= MAP_HEIGHT - this.height || modChangeY) {
       this.moveSpdY *= -1;
     }
     this.mapXPos += this.moveSpdX;

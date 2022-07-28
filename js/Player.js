@@ -1,6 +1,6 @@
 class Player extends Entity {
-  constructor(ctx, hp, attackPower, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT) {
-    super("player", mapWidth / 2, mapHeight / 2, 7, mapWidth, mapHeight, TILE_SIZE, SIZE_MULT);
+  constructor(ctx, hp, attackPower) {
+    super("player", MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
     this.ctx = ctx;
     this.hp = hp;
     this.attackPower = attackPower;
