@@ -1,7 +1,6 @@
 class Player extends Entity {
   constructor(ctx, hp, attackPower) {
-    super("player", MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
-    this.ctx = ctx;
+    super("player", ctx, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
     this.hp = hp;
     this.attackPower = attackPower;
     this.img = {};
@@ -60,7 +59,6 @@ class Player extends Entity {
   };
 
   testAttack = function (entity2) {
-    //return if colliding (true/false)
     var rect1 = {
       x: this.swordCoord.x - this.width / 2,
       y: this.swordCoord.y - this.height / 2,
@@ -77,7 +75,7 @@ class Player extends Entity {
   };
 
   updateCurrentImage = function (item) {
-    if (item.id === "4") {
+    if (item.itemId === "4") {
       this.img.currentImage = this.img.withShield;
     }
   };

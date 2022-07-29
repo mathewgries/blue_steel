@@ -45,6 +45,8 @@ renderCanvas = function () {
 let mapCollection;
 let itemCollection;
 let enemyCollection;
+const dropItemIdList = ["7", "8", "9", "10"];
+let dropItems = {};
 
 let inventory;
 let player;
@@ -55,17 +57,18 @@ startGame = function () {
   mapCollection = JSON.parse(JSON.stringify(mapData));
   itemCollection = JSON.parse(JSON.stringify(itemData));
   enemyCollection = {};
+  dropItems = {};
+
+  for (let key in itemCollection) {
+    if (dropItemIdList.includes(key)) {
+      dropItems[key] = itemCollection[key];
+    }
+  }
 
   inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT);
   player = new Player(ctxMap, 115, 5);
   START_MAP = "start_map_001";
-  currentMap = new MapBoard(
-    START_MAP,
-    ctxMap,
-    "outerworld",
-    0,
-    INV_HEIGHT
-  );
+  currentMap = new MapBoard(START_MAP, ctxMap, "outerworld", 0, INV_HEIGHT);
 };
 
 update = function () {
@@ -95,6 +98,7 @@ update = function () {
     } else if (enemy.toRemove && !enemy.doRemove) {
       enemy.update();
     } else if (enemy.doRemove) {
+      currentMap.dropItem(enemy);
       delete enemyCollection[key];
     }
   }

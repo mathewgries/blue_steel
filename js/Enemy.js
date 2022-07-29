@@ -1,17 +1,18 @@
 class Enemy extends Entity {
-  constructor(id, ctx, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
-    super("enemy", xPos, yPos, moveSpd);
+  constructor(id, ctx, hp, attackPower, xPos, yPos, moveSpd, directionMod, itemDropRating, imgSrc) {
+    super("enemy", ctx, xPos, yPos, moveSpd);
     this.id = id;
     this.hp = hp;
     this.attackPower = attackPower;
-    this.ctx = ctx;
-    this.img = new Image();
-    this.img.src = imgSrc;
-    this.deathAnimation = null;
-    this.deathAnimationCounter = 0;
     this.moveSpdX = moveSpd;
     this.moveSpdY = moveSpd;
     this.directionMod = directionMod;
+    this.itemDropRating = itemDropRating;
+    this.img = new Image();
+    this.img.src = imgSrc;
+
+    this.deathAnimation = null;
+    this.deathAnimationCounter = 0;
     this.toRemove = false;
     this.doRemove = false;
   }

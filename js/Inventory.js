@@ -15,7 +15,7 @@ class Inventory {
   removeItem = function () {};
 
   drawSword = function () {
-    const sword = itemCollection[player.sword.id];
+    const sword = itemCollection[player.sword.itemId];
     const swordImg = new Image();
     swordImg.src = sword.imgSrc;
 
@@ -68,7 +68,7 @@ class Inventory {
     );
   };
 
-  drawLifeMete = function () {
+  drawLifeMeter = function () {
     this.ctx.fillStyle = "#a31a1a";
     this.ctx.fillText("-LIFE-", 740, 35);
     const heartCount = Math.floor(player.hp / 10);
@@ -107,7 +107,7 @@ class Inventory {
     this.drawBackground();
     this.drawMainWeapon();
     this.drawEquipedItem();
-    this.drawLifeMete();
+    this.drawLifeMeter();
     this.ctx.restore();
   };
 
@@ -117,9 +117,11 @@ class Inventory {
 }
 
 class Item {
-  constructor(item) {
-    this.id = item.id;
+  constructor(item, id) {
+    this.id = id;
+		this.itemId = item.id;
     this.type = item.type;
+		this.tag = item.tag;
     this.name = item.name;
     this.img = new Image();
     this.img.src = item.imgSrc;

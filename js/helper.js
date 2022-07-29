@@ -46,7 +46,7 @@ loadOuterWorldMap = function (x, y, w, h) {
     loadEnemies(mapCollection[newMapId].enemyData);
   }
 
-  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT, MAP_WIDTH, MAP_HEIGHT);
+  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
 };
 
 isCaveMapTransition = function (x, y) {
@@ -65,7 +65,7 @@ loadCaveMap = function (caveId) {
   player.mapXPos = MAP_WIDTH / 2 - player.width / 2;
   player.mapYPos = MAP_HEIGHT - player.height - player.moveSpd;
 
-  currentMap = new MapBoard(caveId, ctxMap, "cave", 0, INV_HEIGHT, MAP_WIDTH, MAP_HEIGHT);
+  currentMap = new MapBoard(caveId, ctxMap, "cave", 0, INV_HEIGHT);
 };
 
 isExitCaveMap = function () {
@@ -106,15 +106,7 @@ exitCaveMap = function () {
     loadEnemies(mapCollection[newMapId].enemyData);
   }
 
-  currentMap = new MapBoard(
-    newMapId,
-    ctxMap,
-    "outerworld",
-    0,
-    INV_HEIGHT,
-    MAP_WIDTH,
-    MAP_HEIGHT
-  );
+  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
 
   player.mapXPos = playerX;
   player.mapYPos = playerY;
@@ -126,24 +118,25 @@ validateItemPickup = function (currentMap, player) {
     for (let key in currentMap.itemList) {
       const item = currentMap.itemList[key];
       if (item.mapX === playerCenter.gridXId && item.mapY === playerCenter.gridYId) {
-        const newPlayerItem = new Item(itemCollection[key]);
-        inventory.addItem(newPlayerItem);
+        inventory.addItem(item);
+        console.log("PICKED UP");
 
-        if (newPlayerItem.type === "sword") {
-          player.sword = newPlayerItem;
+        if (item.type === "sword") {
+          player.sword = item;
           if (!player.attackEnabled) {
             player.enableAttack();
           }
         }
 
-        if (newPlayerItem.type === "shield") {
+        if (item.type === "shield") {
           if (!player.shield) {
-            player.updateCurrentImage(newPlayerItem);
+            player.updateCurrentImage(item);
           }
-          player.shield = newPlayerItem;
+          player.shield = item;
         }
 
-        mapCollection[currentMap.id].itemList[key].pickedUp = true;
+				currentMap.setDefaultItemPickedUp(item)
+
         delete currentMap.itemList[key];
         break;
       }
@@ -166,11 +159,8 @@ loadEnemies = function (enemyList) {
         generateYSpawn(),
         enemyInfo.moveSpd,
         enemyInfo.directionMod,
-        enemyInfo.imgSrc,
-        MAP_WIDTH,
-        MAP_HEIGHT,
-        TILE_SIZE,
-        SIZE_MULT
+        enemyInfo.itemDropRating,
+        enemyInfo.imgSrc
       );
       enemyCollection[count] = enemy;
     }

@@ -7,13 +7,40 @@ class MapBoard {
     this.mapY = mapY;
     this.map = mapCollection[id];
     this.mapGrid = this.map.mapGrid;
-    this.dropRating = this.map.dropRating;
-    this.dropRate = this.map.dropRate;
+    this.itemDropRating = this.map.itemDropRating;
+    this.itemDropRate = this.map.itemDropRate;
     this.image = new Image();
     this.image.src = this.map.imgSrc;
     this.npc = this.setNpcData(this.map.npcData);
     this.itemList = this.setDefaultItems(this.map.itemList);
   }
+
+  dropItem = function (entity) {
+    if (this.generateItemDropRate()) {
+      const enemyIDR = entity.itemDropRating;
+      const selectedRating = this.generateItemSelect();
+      for (let key in dropItems) {
+        if (dropItems[key].itemRating === selectedRating) {
+          this.addDropItem(dropItems[key], entity);
+          break;
+        }
+      }
+    }
+  };
+
+  generateItemDropRate = function () {
+    const dr = Math.floor(Math.random() * (this.itemDropRate - 1 + 1) + 1);
+    return dr === this.itemDropRate;
+  };
+
+  generateItemSelect = function () {
+    const maxProbability = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+    if (maxProbability < 5) {
+      return Math.floor(Math.random() * (this.itemDropRating - 1 + 1) + 1);
+    } else {
+      return Math.floor(Math.random() * (5 - 1 + 1) + 1);
+    }
+  };
 
   setNpcData = function (npcData) {
     if (!npcData) {
@@ -28,21 +55,40 @@ class MapBoard {
     }
   };
 
+  generateItemId = function () {
+    return Date.now() + Math.floor(Math.random() * (100 - 1 + 1) + 1);
+  };
+
   setDefaultItems = function (itemList) {
     if (itemList) {
       let items = {};
       for (let key in itemList) {
         if (!itemList[key].pickedUp) {
-          items[key] = new Item(itemCollection[key]);
-          items[key].mapX = itemList[key].x;
-          items[key].mapY = itemList[key].y;
-          items[key].pickedUp = itemList[key].pickedUp;
+          const id = this.generateItemId();
+          items[id] = new Item(itemCollection[key], id);
+          items[id].mapX = itemList[key].x;
+          items[id].mapY = itemList[key].y;
+          items[id].isDefault = true;
         }
       }
       return items;
     } else {
-      return null;
+      return {};
     }
+  };
+
+  setDefaultItemPickedUp = function (item) {
+    if (item.isDefault) {
+      mapCollection[currentMap.id].itemList[item.itemId].pickedUp = true;
+    }
+  };
+
+  addDropItem = function (item, entity) {
+    const id = this.generateItemId();
+    this.itemList[id] = new Item(item, id);
+    this.itemList[id].mapX = Math.floor(entity.mapXPos / (TILE_SIZE * SIZE_MULT));
+    this.itemList[id].mapY = Math.floor(entity.mapYPos / (TILE_SIZE * SIZE_MULT));
+    this.itemList[id].isDefault = false;
   };
 
   getGridValue = function (gridXId, gridYId) {
@@ -52,21 +98,20 @@ class MapBoard {
   drawMapItems = function () {
     for (let key in this.itemList) {
       const item = this.itemList[key];
-      if (!item.pickedUp) {
-        this.ctx.save();
-        const imgDim = TILE_SIZE * SIZE_MULT;
-        this.ctx.drawImage(
-          item.img,
-          item.imgX * TILE_SIZE,
-          item.imgY * TILE_SIZE,
-          TILE_SIZE,
-          TILE_SIZE,
-          item.mapX * TILE_SIZE * SIZE_MULT,
-          item.mapY * TILE_SIZE * SIZE_MULT,
-          imgDim,
-          imgDim
-        );
-      }
+      this.ctx.save();
+      const imgDim = TILE_SIZE * SIZE_MULT;
+
+      this.ctx.drawImage(
+        item.img,
+        item.imgX * TILE_SIZE,
+        item.imgY * TILE_SIZE,
+        TILE_SIZE,
+        TILE_SIZE,
+        item.mapX * TILE_SIZE * SIZE_MULT,
+        item.mapY * TILE_SIZE * SIZE_MULT,
+        imgDim,
+        imgDim
+      );
       this.ctx.restore();
     }
   };
