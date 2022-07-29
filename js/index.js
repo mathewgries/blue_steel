@@ -66,7 +66,7 @@ startGame = function () {
   }
 
   inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT);
-  player = new Player(ctxMap, 115, 5);
+  player = new Player(ctxMap, 60, 5);
   START_MAP = "start_map_001";
   currentMap = new MapBoard(START_MAP, ctxMap, "outerworld", 0, INV_HEIGHT);
 };

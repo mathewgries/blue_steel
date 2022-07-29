@@ -119,7 +119,6 @@ validateItemPickup = function (currentMap, player) {
       const item = currentMap.itemList[key];
       if (item.mapX === playerCenter.gridXId && item.mapY === playerCenter.gridYId) {
         inventory.addItem(item);
-        console.log("PICKED UP");
 
         if (item.type === "sword") {
           player.sword = item;

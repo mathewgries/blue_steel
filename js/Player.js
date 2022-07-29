@@ -2,6 +2,9 @@ class Player extends Entity {
   constructor(ctx, hp, attackPower) {
     super("player", ctx, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
     this.hp = hp;
+    this.maxHp = 60;
+    this.defense = 1;
+    this.coinCount = 0;
     this.attackPower = attackPower;
     this.img = {};
     this.img.withoutItems = new Image();
@@ -31,7 +34,7 @@ class Player extends Entity {
 
   processEnemyAttack = function (entity) {
     if (!this.tookDamage) {
-      this.hp -= entity.attackPower;
+      this.hp -= entity.attackPower / this.defense;
       this.tookDamage = true;
       const x = this.mapXPos;
       const y = this.mapYPos;

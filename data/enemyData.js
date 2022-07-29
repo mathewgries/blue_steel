@@ -6,7 +6,7 @@ enemyData = {
     imgSrc: "img/entities/blue_bat.png",
     moveSpd: 7,
     directionMod: 200,
-    attackPower: 5,
+    attackPower: 10,
 		itemDropRating: 2,
     hp: 5,
   },
