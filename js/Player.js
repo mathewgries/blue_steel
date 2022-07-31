@@ -5,6 +5,9 @@ class Player extends Entity {
     this.maxHp = 60;
     this.defense = 1;
     this.coinCount = 0;
+    this.maxCoinCount = 150;
+    this.bombCount = 0;
+    this.maxBombCount = 8;
     this.attackPower = attackPower;
     this.img = {};
     this.img.withoutItems = new Image();

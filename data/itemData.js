@@ -78,7 +78,7 @@ itemData = {
   },
   8: {
     id: "8",
-    type: "red_rupee",
+    type: "rupee",
     name: "Red Rupee",
     tag: "red_rupee",
     imgSrc: "img/entities/inventoyItems.png",
@@ -90,7 +90,7 @@ itemData = {
   },
   9: {
     id: "9",
-    type: "blue_rupee",
+    type: "rupee",
     name: "Blue Rupee",
     tag: "blue_rupee",
     imgSrc: "img/entities/inventoyItems.png",
