@@ -45,6 +45,8 @@ renderCanvas = function () {
 let mapCollection;
 let itemCollection;
 let enemyCollection;
+let itemList;
+let enemyList;
 const dropItemIdList = ["7", "8", "9", "10"];
 let dropItems = {};
 
@@ -56,7 +58,9 @@ let currentMap;
 startGame = function () {
   mapCollection = JSON.parse(JSON.stringify(mapData));
   itemCollection = JSON.parse(JSON.stringify(itemData));
-  enemyCollection = {};
+  enemyCollection = JSON.parse(JSON.stringify(enemyData));
+  itemList = {};
+  enemyList = {};
   dropItems = {};
 
   for (let key in itemCollection) {
@@ -74,40 +78,60 @@ startGame = function () {
 update = function () {
   renderCanvas();
 
-  const x = player.mapXPos;
-  const y = player.mapYPos;
-  const w = player.width;
-  const h = player.height;
-  isMapTransition(x, y, w, h);
+  isMapTransition(player);
   currentMap.update();
 
-  for (let key in enemyCollection) {
-    var enemy = enemyCollection[key];
+  for (let key in enemyList) {
+    var enemy = enemyList[key];
 
-    if (!enemy.toRemove) {
+    if (!enemy.getToRemove()) {
       if (enemy.testCollision(player)) {
         player.processEnemyAttack(enemy);
       }
       if (player.pressingAttack && player.testAttack(enemy)) {
-        enemy.hp -= player.attackPower;
+        enemy.setHp(enemy.hp - player.attackPower);
         if (enemy.hp <= 0) {
           enemy.onDeath();
         }
       }
       enemy.update();
-    } else if (enemy.toRemove && !enemy.doRemove) {
+    } else if (enemy.getToRemove() && !enemy.getDoRemove()) {
       enemy.update();
-    } else if (enemy.doRemove) {
-      currentMap.dropItem(enemy);
-      delete enemyCollection[key];
+    } else if (enemy.getDoRemove()) {
+      const newItem = currentMap.dropItem(enemy);
+      if (newItem) {
+        dropItem(newItem, enemy);
+      }
+      delete enemyList[key];
+    }
+  }
+
+  for (let key in itemList) {
+    var item = itemList[key];
+    if (player.testCollision(item)) {
+      inventory.addItem(item, player);
+      item.setToRemove(true);
+    }
+    if (player.getPressingAttack()) {
+      if (player.testAttack(item)) {
+        inventory.addItem(item, player);
+        item.setToRemove(true);
+      }
+    }
+    if (item.getToRemove()) {
+      if (currentMap.checkIsDefaultItem(item.itemId)) {
+        currentMap.getItemData()[item.itemId].pickedUp = true;
+      }
+
+      delete itemList[key];
+    } else {
+      item.update();
     }
   }
 
   inventory.update();
 
   player.update();
-
-  validateItemPickup(currentMap, player);
 };
 
 startGame();

@@ -5,6 +5,7 @@ itemData = {
     name: "Wooden Sword",
     tag: "wooden_sword",
     imgSrc: "img/weapons/wooden_sword.png",
+		scale: 1,
     imgCoordinates: {
       x: 4,
       y: 0,
@@ -16,6 +17,7 @@ itemData = {
     name: "Iron Sword",
     tag: "iron_sword",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     imgCoordinates: {
       x: 1,
       y: 0,
@@ -27,6 +29,7 @@ itemData = {
     name: "Blue Steel",
     tag: "blue_steel",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     imgCoordinates: {
       x: 2,
       y: 0,
@@ -38,6 +41,7 @@ itemData = {
     name: "Wooden Shield",
     tag: "wooden_shield",
     imgSrc: "img/weapons/wooden_shield.png",
+		scale: 1,
     imgCoordinates: {
       x: 0,
       y: 0,
@@ -49,6 +53,7 @@ itemData = {
     name: "Iron Shield",
     tag: "iron_shield",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     imgCoordinates: {
       x: 4,
       y: 0,
@@ -59,6 +64,7 @@ itemData = {
     type: "bow",
     name: "Long Bow",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     imgCoordinates: {
       x: 6,
       y: 0,
@@ -70,6 +76,7 @@ itemData = {
     name: "Bomb",
     tag: "bomb",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     itemRating: 4,
     imgCoordinates: {
       x: 0,
@@ -82,6 +89,7 @@ itemData = {
     name: "Red Rupee",
     tag: "red_rupee",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     itemRating: 1,
     imgCoordinates: {
       x: 1,
@@ -94,6 +102,7 @@ itemData = {
     name: "Blue Rupee",
     tag: "blue_rupee",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 1,
     itemRating: 2,
     imgCoordinates: {
       x: 2,
@@ -106,6 +115,7 @@ itemData = {
     name: "Heart",
     tag: "heart",
     imgSrc: "img/entities/inventoyItems.png",
+		scale: 0.5,
     itemRating: 3,
     imgCoordinates: {
       x: 3,

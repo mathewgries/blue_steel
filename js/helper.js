@@ -1,22 +1,31 @@
-isMapTransition = function (x, y, w, h) {
+generateId = function () {
+  return Date.now() + Math.floor(Math.random() * (100 - 1 + 1) + 1);
+};
+
+isMapTransition = function (player) {
+  const x = player.getMapXPos();
+  const y = player.getMapYPos();
+  const w = player.getWidth();
+  const h = player.getHeight();
+
   if (currentMap.type === "outerworld") {
     if (isOuterWorldMapTransition(x, y, w, h)) {
-      loadOuterWorldMap(x, y, w, h);
-    } else if (isCaveMapTransition(x, y)) {
+      loadOuterWorldMap(player);
+    } else if (isCaveMapTransition(player)) {
       const gridPos = player.getGridPos(x, y);
 
-      for (let key in currentMap.map.entrances) {
-        const entrance = currentMap.map.entrances[key];
+      for (let key in currentMap.getMap().entrances) {
+        const entrance = currentMap.getMap().entrances[key];
 
         if (entrance.x === gridPos.gridXId && entrance.y === gridPos.gridYId) {
-          loadCaveMap(entrance.id);
+          loadCaveMap(entrance.id, player);
           break;
         }
       }
     }
-  } else if (currentMap.type === "cave") {
-    if (isExitCaveMap()) {
-      exitCaveMap();
+  } else if (currentMap.getType() === "cave") {
+    if (isExitCaveMap(player)) {
+      exitCaveMap(player);
     }
   }
 };
@@ -25,32 +34,37 @@ isOuterWorldMapTransition = function (x, y, w, h) {
   return x <= 0 || x + w >= MAP_WIDTH || y <= 0 || y + h >= MAP_HEIGHT;
 };
 
-loadOuterWorldMap = function (x, y, w, h) {
-  enemyCollection = {};
+loadOuterWorldMap = function (player) {
+  const x = player.getMapXPos();
+  const y = player.getMapYPos();
+  const w = player.getWidth();
+  const h = player.getHeight();
+  const m = player.getMoveSpeed();
+
   let newMapId = "";
   if (x <= 0) {
-    newMapId = currentMap.map.mapWest;
-    player.mapXPos = MAP_WIDTH - w - player.moveSpd;
+    newMapId = currentMap.getNextMapId("w");
+    player.setMapXPos(MAP_WIDTH - w - m);
   } else if (x + w >= MAP_WIDTH) {
-    newMapId = currentMap.map.mapEast;
-    player.mapXPos = 0 + player.moveSpd;
+    newMapId = currentMap.getNextMapId("e");
+    player.setMapXPos(m);
   } else if (y <= 0) {
-    newMapId = currentMap.map.mapNorth;
-    player.mapYPos = MAP_HEIGHT - h - player.moveSpd;
+    newMapId = currentMap.getNextMapId("n");
+    player.setMapYPos(MAP_HEIGHT - h - m);
   } else if (y + h >= MAP_HEIGHT) {
-    newMapId = currentMap.map.mapSouth;
-    player.mapYPos = 0 + player.moveSpd;
+    newMapId = currentMap.getNextMapId("s");
+    player.setMapYPos(m);
   }
 
-  if (mapCollection[newMapId].enemyData) {
-    loadEnemies(mapCollection[newMapId].enemyData);
-  }
+  prepareMapData(newMapId);
 
   currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
 };
 
-isCaveMapTransition = function (x, y) {
-  if (currentMap.map.hasEntrances) {
+isCaveMapTransition = function (player) {
+  const x = player.getMapXPos();
+  const y = player.getMapYPos();
+  if (currentMap.getMap().entrances) {
     const gridPos = player.getGridPos(x, y);
     if (currentMap.getGridValue(gridPos.gridXId, gridPos.gridYId) === 3) {
       return true;
@@ -60,97 +74,80 @@ isCaveMapTransition = function (x, y) {
   }
 };
 
-loadCaveMap = function (caveId) {
-  enemyCollection = {};
-  player.mapXPos = MAP_WIDTH / 2 - player.width / 2;
-  player.mapYPos = MAP_HEIGHT - player.height - player.moveSpd;
+loadCaveMap = function (caveId, player) {
+  const w = player.getWidth();
+  const h = player.getHeight();
+  const m = player.getMoveSpeed();
+
+  player.setMapXPos(MAP_WIDTH / 2 - w / 2);
+  player.setMapYPos(MAP_HEIGHT - h - m);
+
+  prepareMapData(caveId);
 
   currentMap = new MapBoard(caveId, ctxMap, "cave", 0, INV_HEIGHT);
 };
 
-isExitCaveMap = function () {
-  if (player.mapYPos === MAP_HEIGHT - player.height) {
+isExitCaveMap = function (player) {
+  if (player.getMapYPos() === MAP_HEIGHT - player.getHeight()) {
     return true;
   } else {
     return false;
   }
 };
 
-exitCaveMap = function () {
-  enemyCollection = {};
+exitCaveMap = function (player) {
   let newMapId;
-  if (currentMap.id === "start_cave" && player.shield && player.sword) {
+  if (currentMap.getId() === "start_cave" && player.shield && player.sword) {
     newMapId = "river_013";
   } else {
-    newMapId = currentMap.map.caveExit;
+    newMapId = currentMap.getMap().caveExit;
   }
 
-  const gridXId = currentMap.map.x;
-  const gridYId = currentMap.map.y;
-  const exitDirection = currentMap.map.exitDirection;
+  const gridXId = currentMap.getMap().x;
+  const gridYId = currentMap.getMap().y;
+  const exitDirection = currentMap.getMap().exitDirection;
   let playerX;
   let playerY;
 
   if (exitDirection === "up") {
     playerX = TILE_SIZE * SIZE_MULT * gridXId;
-    playerY = TILE_SIZE * SIZE_MULT * gridYId - player.height / 2;
+    playerY = TILE_SIZE * SIZE_MULT * gridYId - player.getHeight() / 2;
   } else if (exitDirection === "down") {
     playerX = TILE_SIZE * SIZE_MULT * gridXId;
-    playerY = TILE_SIZE * SIZE_MULT * gridYId + player.height / 2;
+    playerY = TILE_SIZE * SIZE_MULT * gridYId + player.getHeight() / 2;
   } else if (exitDirection === "right" || exitDirection === "left") {
     playerX = TILE_SIZE * SIZE_MULT * gridXId;
     playerY = TILE_SIZE * SIZE_MULT * gridYId;
   }
 
+  prepareMapData(newMapId);
+
+  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
+
+  player.setMapXPos(playerX);
+  player.setMapYPos(playerY);
+};
+
+prepareMapData = function (newMapId) {
+  enemyList = {};
+  itemList = {};
   if (mapCollection[newMapId].enemyData) {
     loadEnemies(mapCollection[newMapId].enemyData);
   }
 
-  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
-
-  player.mapXPos = playerX;
-  player.mapYPos = playerY;
-};
-
-validateItemPickup = function (currentMap, player) {
-  if (currentMap.itemList) {
-    const playerCenter = player.getCenterPos();
-    for (let key in currentMap.itemList) {
-      const item = currentMap.itemList[key];
-      if (item.mapX === playerCenter.gridXId && item.mapY === playerCenter.gridYId) {
-        inventory.addItem(item);
-
-        if (item.type === "sword") {
-          player.sword = item;
-          if (!player.attackEnabled) {
-            player.enableAttack();
-          }
-        }
-
-        if (item.type === "shield") {
-          if (!player.shield) {
-            player.updateCurrentImage(item);
-          }
-          player.shield = item;
-        }
-
-				currentMap.setDefaultItemPickedUp(item)
-
-        delete currentMap.itemList[key];
-        break;
-      }
-    }
+  if (mapCollection[newMapId].itemData) {
+    loadItems(mapCollection[newMapId].itemData);
   }
 };
 
-loadEnemies = function (enemyList) {
-  enemyCollection = {};
-  let count = 0;
-  for (let key in enemyList) {
-    for (let i = 0; i < enemyList[key].count; i++) {
-      const enemyInfo = enemyData[key];
+loadEnemies = function (enemies) {
+  enemyList = {};
+  for (let key in enemies) {
+    for (let i = 0; i < enemies[key].count; i++) {
+      const enemyInfo = enemyCollection[key];
+      const id = generateId();
       const enemy = new Enemy(
-        count++,
+        id,
         ctxMap,
         enemyInfo.hp,
         enemyInfo.attackPower,
@@ -158,12 +155,35 @@ loadEnemies = function (enemyList) {
         generateYSpawn(),
         enemyInfo.moveSpd,
         enemyInfo.directionMod,
-        enemyInfo.itemDropRating,
         enemyInfo.imgSrc
       );
-      enemyCollection[count] = enemy;
+      enemyList[id] = enemy;
     }
   }
+};
+
+loadItems = function (items) {
+  itemList = {};
+  for (let key in items) {
+    if (!items[key].pickedUp) {
+      const itemInfo = itemCollection[key];
+      const id = generateId();
+      const item = new Item(
+        id,
+        itemInfo,
+        ctxMap,
+        generateMapPos(items[key].x),
+        generateMapPos(items[key].y)
+      );
+      itemList[id] = item;
+    }
+  }
+};
+
+dropItem = function (newItem, enemy) {
+  const id = generateId();
+  const item = new Item(id, newItem, ctxMap, enemy.getMapXPos(), enemy.getMapYPos());
+  itemList[id] = item;
 };
 
 testCollisionRectRect = function (rect1, rect2) {
@@ -173,6 +193,10 @@ testCollisionRectRect = function (rect1, rect2) {
     rect1.y <= rect2.y + rect2.height &&
     rect2.y <= rect1.y + rect1.height
   );
+};
+
+generateMapPos = function (gridPos) {
+  return gridPos * TILE_SIZE * SIZE_MULT;
 };
 
 generateXSpawn = function () {

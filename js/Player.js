@@ -1,14 +1,7 @@
 class Player extends Entity {
   constructor(ctx, hp, attackPower) {
-    super("player", ctx, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
-    this.hp = hp;
-    this.maxHp = 60;
-    this.defense = 1;
-    this.coinCount = 0;
-    this.maxCoinCount = 150;
-    this.bombCount = 0;
-    this.maxBombCount = 8;
-    this.attackPower = attackPower;
+    super("player", "player", ctx, hp, attackPower, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
+
     this.img = {};
     this.img.withoutItems = new Image();
     this.img.withoutItems.src = "img/entities/player_no_items.png";
@@ -17,207 +10,370 @@ class Player extends Entity {
     this.img.currentImage = this.img.withoutItems;
     this.img.attack = new Image();
     this.img.attack.src = "img/entities/player_attack.png";
-    this.sword = null;
-    this.shield = null;
-    this.attackEnabled = false;
-    this.attackMod = 0;
-    this.swordCoord = { x: 0, y: 0 };
-    this.attackFrameCounter = 0;
-    this.equipedItem = null;
+
+    this.maxHp = 60;
+    this.defense = 1;
+    this.coinCount = 0;
+    this.maxCoinCount = 150;
+    this.bombCount = 0;
+    this.maxBombCount = 8;
+
     this.tookDamage = false;
     this.damageCounter = 0;
+
+    this.attackEnabled = false;
+    this.pressingAttack = false;
+    this.attackRelease = true;
+
+    this.sword = null;
+    this.shield = null;
+    this.swordCoord = { x: 0, y: 0 };
+    this.equipedItem = null;
 
     this.pressingRight = false;
     this.pressingLeft = false;
     this.pressingDown = false;
     this.pressingUp = false;
-    this.pressingAttack = false;
-    this.attackRelease = true;
   }
 
-  processEnemyAttack = function (entity) {
-    if (!this.tookDamage) {
-      this.hp -= entity.attackPower / this.defense;
-      this.tookDamage = true;
-      const x = this.mapXPos;
-      const y = this.mapYPos;
+  setMaxHp = function (val) {
+    this.maxHp = val;
+  };
 
-      if (entity.mapXPos > this.mapXPos) {
-        this.moveLeft(x, y);
-        entity.updatePosition();
-      } else {
-        this.moveRight(x, y);
-        entity.updatePosition();
-      }
+  getMaxHp = function () {
+    return this.maxHp;
+  };
 
-      if (entity.mapYPos > this.mapYPos) {
-        this.moveUp(x, y);
-        entity.updatePosition();
-      } else {
-        this.moveDown(x, y);
-        entity.updatePosition();
-      }
+  setDefense = function (val) {
+    this.defense = val;
+  };
+
+  getDefense = function () {
+    return this.defense;
+  };
+
+  setCoinCount = function (val) {
+    this.coinCount = val;
+  };
+
+  updateCoinCount = function (val) {
+    this.coinCount = val;
+  };
+
+  getCoinCount = function () {
+    return this.coinCount;
+  };
+
+  setMaxCoinCount = function (val) {
+    this.maxCoinCount = val;
+  };
+
+  getMaxCoinCount = function () {
+    return this.maxCoinCount;
+  };
+
+  setBombCount = function (val) {
+    this.bombCount = val;
+  };
+
+  updateBombCount = function (val) {
+    this.bombCount = val;
+  };
+
+  getBombCount = function () {
+    return this.bombCount;
+  };
+
+  setMaxBombCount = function (val) {
+    this.maxBombCount = val;
+  };
+
+  getMaxBombCount = function () {
+    return this.maxBombCount;
+  };
+
+  setTookDamage = function (val) {
+    this.tookDamage = val;
+  };
+
+  getTookDamage = function () {
+    return this.tookDamage;
+  };
+
+  setDamageCounter = function (val) {
+    this.damageCounter = val;
+  };
+
+  getDamageCounter = function () {
+    return this.damageCounter;
+  };
+
+  setAttackEnabled = function (val) {
+    this.attackEnabled = val;
+  };
+
+  getAttackEnabled = function () {
+    return this.attackEnabled;
+  };
+
+  setPressingUp = function (val) {
+    this.pressingUp = val;
+  };
+
+  getPressingUp = function () {
+    return this.pressingUp;
+  };
+
+  setPressingDown = function (val) {
+    this.pressingDown = val;
+  };
+
+  getPressingDown = function () {
+    return this.pressingDown;
+  };
+
+  setPressingRight = function (val) {
+    this.pressingRight = val;
+  };
+
+  getPressingRight = function () {
+    return this.pressingRight;
+  };
+
+  setPressingLeft = function (val) {
+    this.pressingLeft = val;
+  };
+
+  getPressingLeft = function () {
+    return this.pressingLeft;
+  };
+
+  setPressingAttack = function (val) {
+    this.pressingAttack = val;
+  };
+
+  getPressingAttack = function () {
+    return this.pressingAttack;
+  };
+
+  setAttackRelease = function (val) {
+    this.attackRelease = val;
+  };
+
+  getAttackRelease = function () {
+    return this.attackRelease;
+  };
+
+  setSword = function (item) {
+    // this.sword = item;
+    this.sword = {
+      itemId: item.itemId,
+      img: item.getImg(),
+      name: item.getName(),
+      tag: item.getTag(),
+      type: item.getType(),
+      mapXPos: item.getMapXPos(),
+      mapYPos: item.getMapYPos(),
+      width: item.getWidth(),
+      height: item.getHeight(),
+    };
+    if (!this.getAttackEnabled()) {
+      this.setAttackEnabled(true);
     }
   };
 
-  enableAttack = function () {
-    this.attackEnabled = true;
+  getSword = function () {
+    return this.sword;
+  };
+
+  setSwordCoordinates = function () {
+    const sword = this.getSword();
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
+
+    if (this.getAttackMod() === 0) {
+      sword.mapXPos = x - TILE_SIZE * SIZE_MULT;
+      sword.mapYPos = y;
+    } else if (this.getAttackMod() === 1) {
+      sword.mapXPos = x;
+      sword.mapYPos = y + TILE_SIZE * SIZE_MULT;
+    } else if (this.getAttackMod() === 2) {
+      sword.mapXPos = x;
+      sword.mapYPos = y - TILE_SIZE * SIZE_MULT;
+    } else if (this.getAttackMod() === 3) {
+      sword.mapXPos = x + TILE_SIZE * SIZE_MULT;
+      sword.mapYPos = y;
+    }
+  };
+
+  setShield = function (item) {
+    this.shield = item;
+    this.updateCurrentImage();
+  };
+
+  getShield = function () {
+    return this.shield;
   };
 
   testAttack = function (entity2) {
+		this.setSwordCoordinates()
+    const sword = this.getSword();
     var rect1 = {
-      x: this.swordCoord.x - this.width / 2,
-      y: this.swordCoord.y - this.height / 2,
-      width: this.width,
-      height: this.height,
+      x: sword.mapXPos - this.getWidth() / 2,
+      y: sword.mapYPos - this.getHeight() / 2,
+      width: sword.width,
+      height: sword.height,
     };
     var rect2 = {
-      x: entity2.mapXPos - entity2.width / 2,
-      y: entity2.mapYPos - entity2.height / 2,
-      width: entity2.width,
-      height: entity2.height,
+      x: entity2.getMapXPos() - entity2.getWidth() / 2,
+      y: entity2.getMapYPos() - entity2.getHeight() / 2,
+      width: entity2.getWidth(),
+      height: entity2.getHeight(),
     };
     return testCollisionRectRect(rect1, rect2);
   };
 
-  updateCurrentImage = function (item) {
-    if (item.itemId === "4") {
-      this.img.currentImage = this.img.withShield;
+  processEnemyAttack = function (entity) {
+    if (!this.getTookDamage()) {
+      this.setHp(this.getHp() - entity.getAttackPower() / this.getDefense());
+      this.setTookDamage(true);
+      const x = this.getMapXPos();
+      const y = this.getMapYPos();
+
+      if (entity.getMapXPos() > x) {
+        this.moveLeft(x, y);
+        entity.updatePosition();
+      } else {
+        this.moveRight(x, y);
+        entity.updatePosition();
+      }
+
+      if (entity.getMapYPos() > y) {
+        this.moveUp(x, y);
+        entity.updatePosition();
+      } else {
+        this.moveDown(x, y);
+        entity.updatePosition();
+      }
     }
+  };
+
+  updateCurrentImage = function () {
+    this.img.currentImage = this.img.withShield;
   };
 
   updatePosition = function () {
     if (this.validateKeyPress()) {
-      const x = this.mapXPos;
-      const y = this.mapYPos;
-
-      if (this.pressingUp) {
-        this.moveUp(x, y);
-        this.attackMod = 2;
+      if (this.getPressingUp()) {
+        this.moveUp();
+        this.setAttackMod(2);
       }
 
-      if (this.pressingDown) {
-        this.moveDown(x, y);
-        this.attackMod = 1;
+      if (this.getPressingDown()) {
+        this.moveDown();
+        this.setAttackMod(1);
       }
 
-      if (this.pressingRight) {
-        this.moveRight(x, y);
-        this.attackMod = 3;
+      if (this.getPressingRight()) {
+        this.moveRight();
+        this.setAttackMod(3);
       }
 
-      if (this.pressingLeft) {
-        this.moveLeft(x, y);
-        this.attackMod = 0;
+      if (this.getPressingLeft()) {
+        this.moveLeft();
+        this.setAttackMod(0);
       }
     }
   };
 
   validateKeyPress = function () {
     let valid = true;
-    if (this.pressingUp && this.pressingDown) {
+    if (this.getPressingUp() && this.getPressingDown()) {
       valid = false;
-    } else if (this.pressingLeft && this.pressingRight) {
+    } else if (this.getPressingLeft() && this.getPressingRight()) {
       valid = false;
     }
     return valid;
   };
 
   drawWalking = function () {
-    this.ctx.save();
-    const x = this.mapXPos;
-    const y = this.mapYPos;
+    this.getCtx().save();
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
 
     this.ctx.drawImage(
       this.img.currentImage,
-      this.walkingMod * frameWidth,
-      this.directionMod * frameHeight,
+      this.getWalkingMod() * frameWidth,
+      this.getDirectionMod() * frameHeight,
       frameWidth,
       frameHeight,
       x,
       y,
-      this.width,
-      this.height
+      this.getWidth(),
+      this.getHeight()
     );
-    this.ctx.restore();
+    this.getCtx().restore();
   };
 
   drawAttack = function () {
-    this.ctx.save();
-    const x = this.mapXPos;
-    const y = this.mapYPos;
+    this.getCtx().save();
+    const sword = this.getSword();
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 4;
     const frameHeight = this.img.currentImage.height;
+
     this.ctx.drawImage(
       this.img.currentImage,
-      this.attackMod * frameWidth,
+      this.getAttackMod() * frameWidth,
       0,
       frameWidth,
       frameHeight,
       x,
       y,
-      this.width,
-      this.height
+      this.getWidth(),
+      this.getHeight()
     );
-
-    if (this.attackMod === 0) {
-      this.swordCoord.x = x - TILE_SIZE * SIZE_MULT;
-      this.swordCoord.y = y;
-    } else if (this.attackMod === 1) {
-      this.swordCoord.x = x;
-      this.swordCoord.y = y + TILE_SIZE * SIZE_MULT;
-    } else if (this.attackMod === 2) {
-      this.swordCoord.x = x;
-      this.swordCoord.y = y - TILE_SIZE * SIZE_MULT;
-    } else if (this.attackMod === 3) {
-      this.swordCoord.x = x + TILE_SIZE * SIZE_MULT;
-      this.swordCoord.y = y;
-    }
 
     this.ctx.drawImage(
       this.sword.img,
-      this.attackMod * frameWidth,
+      this.getAttackMod() * frameWidth,
       0,
       frameWidth,
       frameHeight,
-      this.swordCoord.x,
-      this.swordCoord.y,
-      this.width,
-      this.height
+      sword.mapXPos,
+      sword.mapYPos,
+      sword.width,
+      sword.height
     );
 
-    this.ctx.restore();
-  };
-
-  updateAnimation = function () {
-    this.animationCounter += 0.5;
-    this.walkingMod = Math.floor(this.animationCounter) % 3;
+    this.getCtx().restore();
   };
 
   update = function () {
-    if (this.hp <= 0) {
+    if (this.getHp() <= 0) {
       startGame();
     }
-    if (this.tookDamage) {
-      this.damageCounter += 1;
-      if (this.damageCounter > 5) {
-        this.tookDamage = false;
-        this.damageCounter = 0;
+    if (this.getTookDamage()) {
+      this.setDamageCounter(this.getDamageCounter() + 1);
+      if (this.getDamageCounter() > 5) {
+        this.setTookDamage(false);
+        this.setDamageCounter(0);
       }
     }
-    if (!this.pressingAttack) {
+    if (!this.getPressingAttack()) {
       this.updatePosition();
       this.drawWalking();
-    } else if (this.pressingAttack) {
-      this.attackFrameCounter += 1;
+    } else if (this.getPressingAttack()) {
+      this.setAttackFrameCounter(this.getAttackFrameCounter() + 1);
       this.img.currentImage = this.img.attack;
       this.drawAttack();
-      if (this.attackFrameCounter > 5) {
-        this.pressingAttack = false;
+      if (this.getAttackFrameCounter() > 5) {
+        this.setPressingAttack(false);
         this.img.currentImage = this.img.withShield;
-        this.attackFrameCounter = 0;
+        this.setAttackFrameCounter(0);
       }
     } else {
       this.drawWalking();
@@ -227,17 +383,17 @@ class Player extends Entity {
 
 document.onkeydown = function (event) {
   if (event.key === "d") {
-    player.pressingRight = true;
+    player.setPressingRight(true);
   } else if (event.key === "s") {
-    player.pressingDown = true;
+    player.setPressingDown(true);
   } else if (event.key === "a") {
-    player.pressingLeft = true;
+    player.setPressingLeft(true);
   } else if (event.key === "w") {
-    player.pressingUp = true;
+    player.setPressingUp(true);
   } else if (event.key === "l") {
-    if (player.attackEnabled && player.attackRelease) {
-      player.attackRelease = false;
-      player.pressingAttack = true;
+    if (player.getAttackEnabled() && player.getAttackRelease()) {
+      player.setAttackRelease(false);
+      player.setPressingAttack(true);
     }
   } else if (event.key === "p") {
     paused = !paused;
@@ -246,14 +402,14 @@ document.onkeydown = function (event) {
 
 document.onkeyup = function (event) {
   if (event.key === "d") {
-    player.pressingRight = false;
+    player.setPressingRight(false);
   } else if (event.key === "s") {
-    player.pressingDown = false;
+    player.setPressingDown(false);
   } else if (event.key === "a") {
-    player.pressingLeft = false;
+    player.setPressingLeft(false);
   } else if (event.key === "w") {
-    player.pressingUp = false;
+    player.setPressingUp(false);
   } else if (event.key === "l") {
-    player.attackRelease = true;
+    player.setAttackRelease(true);
   }
 };

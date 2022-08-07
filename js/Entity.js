@@ -1,72 +1,247 @@
 class Entity {
-  constructor(type, ctx, xPos, yPos, moveSpd) {
+  constructor(id, type, ctx, hp, attackPower, xPos, yPos, moveSpd) {
+    this.id = id;
     this.type = type;
-		this.ctx = ctx;
+    this.ctx = ctx;
+    this.hp = hp;
+    this.attackPower = attackPower;
     this.mapXPos = xPos;
     this.mapYPos = yPos;
+    this.moveSpd = moveSpd;
+
     this.width = TILE_SIZE * SIZE_MULT;
     this.height = TILE_SIZE * SIZE_MULT;
-    this.moveSpd = moveSpd;
+
     this.directionMod = 2;
     this.animationCounter = 0;
     this.walkingMod = 1;
+
+    this.attackMod = 0;
+    this.attackFrameCounter = 0;
   }
 
+  getId = function () {
+    return this.id;
+  };
+
+  setHp = function (val) {
+    this.hp = val;
+  };
+
+  updateHp = function (val) {
+    this.hp = val;
+  };
+
+  getHp = function () {
+    return this.hp;
+  };
+
+  setAttackPower = function (val) {
+    this.attackPower = val;
+  };
+
+  getAttackPower = function () {
+    return this.attackPower;
+  };
+
+  getType = function () {
+    return this.type;
+  };
+
+  getCtx = function () {
+    return this.ctx;
+  };
+
+  setMapXPos = function (x) {
+    this.mapXPos = x;
+  };
+
+  getMapXPos = function () {
+    return this.mapXPos;
+  };
+
+  setMapYPos = function (y) {
+    this.mapYPos = y;
+  };
+
+  getMapYPos = function () {
+    return this.mapYPos;
+  };
+
+  getWidth = function () {
+    return this.width;
+  };
+
+  getHeight = function () {
+    return this.height;
+  };
+
+  getMoveSpeed = function () {
+    return this.moveSpd;
+  };
+
+  setDirectionMod = function (num) {
+    this.directionMod = num;
+  };
+
+  getDirectionMod = function () {
+    return this.directionMod;
+  };
+
+  setAnimationCounter = function (val) {
+    this.animationCounter = val;
+  };
+
+  getAnimationCounter = function () {
+    return this.animationCounter;
+  };
+
+  setWalkingMod = function (num) {
+    this.walkingMod = num;
+  };
+
+  getWalkingMod = function () {
+    return this.walkingMod;
+  };
+
+  setAttackMod = function (val) {
+    this.attackMod = val;
+  };
+
+  getAttackMod = function () {
+    return this.attackMod;
+  };
+
+  setAttackFrameCounter = function (val) {
+    this.attackFrameCounter = val;
+  };
+
+  getAttackFrameCounter = function () {
+    return this.attackFrameCounter;
+  };
+
+  getCenterPos = function () {
+    const w = this.getWidth();
+    const h = this.getHeight();
+    return {
+      gridXId: Math.floor((this.getMapXPos() + w / 2) / w),
+      gridYId: Math.floor((this.getMapYPos() + h / 2) / h),
+    };
+  };
+
+  getGridPos = function (x, y) {
+    const w = this.getWidth();
+    const h = this.getHeight();
+    return {
+      gridXId: Math.floor(x / w),
+      gridYId: Math.floor((y + h / 2) / h),
+      gridXPos: x % w,
+      gridYPos: (y + h / 2) % h,
+    };
+  };
+
+  getTopLeftBumber = function (mapXPos, mapYPos) {
+    const gridPos = this.getGridPos(mapXPos, mapYPos);
+    return {
+      gridXId: gridPos.gridXId,
+      gridXPos: gridPos.gridXPos,
+      gridYId: gridPos.gridYId,
+      gridYPos: gridPos.gridYPos,
+    };
+  };
+
+  getBottomLeftBumber = function (x, y) {
+    const gridPos = this.getGridPos(x, y);
+    const yCenter = this.height / 2;
+    return {
+      gridXId: gridPos.gridXId,
+      gridXPos: gridPos.gridXPos,
+      gridYId: gridPos.gridYPos > yCenter ? gridPos.gridYId + 1 : gridPos.gridYId,
+      gridYPos:
+        gridPos.gridYPos <= yCenter ? gridPos.gridYPos + yCenter : gridPos.gridYPos - yCenter,
+    };
+  };
+
+  getTopRightBumber = function (mapXPos, mapYPos) {
+    const gridPos = this.getGridPos(mapXPos, mapYPos);
+    return {
+      gridXId: gridPos.gridXPos === 0 ? gridPos.gridXId : gridPos.gridXId + 1,
+      gridXPos: gridPos.gridXPos === 0 ? this.getWidth() : gridPos.gridXPos,
+      gridYId: gridPos.gridYId,
+      gridYPos: gridPos.gridYPos,
+    };
+  };
+
+  getBottomRightBumber = function (mapXPos, mapYPos) {
+    const gridPos = this.getGridPos(mapXPos, mapYPos);
+    const yCenter = this.height / 2;
+    return {
+      gridXId: gridPos.gridXPos === 0 ? gridPos.gridXId : gridPos.gridXId + 1,
+      gridXPos: gridPos.gridXPos === 0 ? this.getWidth() : gridPos.gridXPos,
+      gridYId: gridPos.gridYPos > yCenter ? gridPos.gridYId + 1 : gridPos.gridYId,
+      gridYPos:
+        gridPos.gridYPos <= yCenter ? gridPos.gridYPos + yCenter : gridPos.gridYPos - yCenter,
+    };
+  };
+
   testCollision = function (entity2) {
-    //return if colliding (true/false)
     var rect1 = {
-      x: this.mapXPos - this.width / 2,
-      y: this.mapYPos - this.height / 2,
-      width: this.width,
-      height: this.height,
+      x: this.getMapXPos() - this.getWidth() / 2,
+      y: this.getMapYPos() - this.getHeight() / 2,
+      width: this.getWidth(),
+      height: this.getHeight(),
     };
     var rect2 = {
-      x: entity2.mapXPos - entity2.width / 2,
-      y: entity2.mapYPos - entity2.height / 2,
-      width: entity2.width,
-      height: entity2.height,
+      x: entity2.getMapXPos() - entity2.getWidth() / 2,
+      y: entity2.getMapYPos() - entity2.getHeight() / 2,
+      width: entity2.getWidth(),
+      height: entity2.getHeight(),
     };
     return testCollisionRectRect(rect1, rect2);
   };
 
-  moveUp = function (nextMapXPos, nextMapYPos) {
-    this.directionMod = 0;
-    nextMapYPos -= this.moveSpd;
-    if (this.validateMoveUp(nextMapXPos, nextMapYPos)) {
-      this.mapYPos = nextMapYPos;
-      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
+  moveUp = function () {
+    const x = this.getMapXPos();
+    const nextMapYPos = this.getMapYPos() - this.getMoveSpeed();
+    if (this.validateMoveUp(x, nextMapYPos)) {
+      this.setMapYPos(nextMapYPos);
+      this.gridPos = this.getGridPos(x, nextMapYPos);
       this.updateAnimation();
     }
+    this.setDirectionMod(0);
   };
 
-  moveDown = function (nextMapXPos, nextMapYPos) {
-    this.directionMod = 2;
-    nextMapYPos += this.moveSpd;
-    if (this.validateMoveDown(nextMapXPos, nextMapYPos)) {
-      this.mapYPos = nextMapYPos;
-      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
+  moveDown = function () {
+    const x = this.getMapXPos();
+    const nextMapYPos = this.getMapYPos() + this.getMoveSpeed();
+    if (this.validateMoveDown(x, nextMapYPos)) {
+      this.setMapYPos(nextMapYPos);
+      this.gridPos = this.getGridPos(x, nextMapYPos);
       this.updateAnimation();
     }
+    this.setDirectionMod(2);
   };
 
-  moveRight = function (nextMapXPos, nextMapYPos) {
-    this.directionMod = 3;
-    nextMapXPos += this.moveSpd;
-    if (this.validateMoveRight(nextMapXPos, nextMapYPos)) {
-      this.mapXPos = nextMapXPos;
-      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
+  moveRight = function () {
+    const y = this.getMapYPos();
+    const nextMapXPos = this.getMapXPos() + this.getMoveSpeed();
+    if (this.validateMoveRight(nextMapXPos, y)) {
+      this.setMapXPos(nextMapXPos);
+      this.gridPos = this.getGridPos(nextMapXPos, y);
       this.updateAnimation();
     }
+    this.setDirectionMod(3);
   };
 
-  moveLeft = function (nextMapXPos, nextMapYPos) {
-    this.directionMod = 1;
-    nextMapXPos -= this.moveSpd;
-    if (this.validateMoveLeft(nextMapXPos, nextMapYPos)) {
-      this.mapXPos = nextMapXPos;
-      this.gridPos = this.getGridPos(this.mapXPos, this.mapYPos);
+  moveLeft = function () {
+    const y = this.getMapYPos();
+    const nextMapXPos = this.getMapXPos() - this.getMoveSpeed();
+    if (this.validateMoveLeft(nextMapXPos, y)) {
+      this.setMapXPos(nextMapXPos);
+      this.gridPos = this.getGridPos(nextMapXPos, y);
       this.updateAnimation();
     }
+    this.setDirectionMod(1);
   };
 
   validateMoveUp = function (nextMapXPos, nextMapYPos) {
@@ -235,89 +410,29 @@ class Entity {
     }
   };
 
-  getCenterPos = function () {
-    return {
-      gridXId: Math.floor((this.mapXPos + this.width / 2) / this.width),
-      gridYId: Math.floor((this.mapYPos + this.height / 2) / this.height),
-    };
-  };
-
-  getGridPos = function (x, y) {
-    return {
-      gridXId: Math.floor(x / this.width),
-      gridYId: Math.floor((y + this.height / 2) / this.height),
-      gridXPos: x % this.width,
-      gridYPos: (y + this.height / 2) % this.height,
-    };
-  };
-
-  getTopLeftBumber = function (mapXPos, mapYPos) {
-    const gridPos = this.getGridPos(mapXPos, mapYPos);
-    return {
-      gridXId: gridPos.gridXId,
-      gridXPos: gridPos.gridXPos,
-      gridYId: gridPos.gridYId,
-      gridYPos: gridPos.gridYPos,
-    };
-  };
-
-  getBottomLeftBumber = function (mapXPos, mapYPos) {
-    const gridPos = this.getGridPos(mapXPos, mapYPos);
-    const yCenter = this.height / 2;
-    return {
-      gridXId: gridPos.gridXId,
-      gridXPos: gridPos.gridXPos,
-      gridYId: gridPos.gridYPos > yCenter ? gridPos.gridYId + 1 : gridPos.gridYId,
-      gridYPos:
-        gridPos.gridYPos <= yCenter ? gridPos.gridYPos + yCenter : gridPos.gridYPos - yCenter,
-    };
-  };
-
-  getTopRightBumber = function (mapXPos, mapYPos) {
-    const gridPos = this.getGridPos(mapXPos, mapYPos);
-    return {
-      gridXId: gridPos.gridXPos === 0 ? gridPos.gridXId : gridPos.gridXId + 1,
-      gridXPos: gridPos.gridXPos === 0 ? this.width : gridPos.gridXPos,
-      gridYId: gridPos.gridYId,
-      gridYPos: gridPos.gridYPos,
-    };
-  };
-
-  getBottomRightBumber = function (mapXPos, mapYPos) {
-    const gridPos = this.getGridPos(mapXPos, mapYPos);
-    const yCenter = this.height / 2;
-    return {
-      gridXId: gridPos.gridXPos === 0 ? gridPos.gridXId : gridPos.gridXId + 1,
-      gridXPos: gridPos.gridXPos === 0 ? this.width : gridPos.gridXPos,
-      gridYId: gridPos.gridYPos > yCenter ? gridPos.gridYId + 1 : gridPos.gridYId,
-      gridYPos:
-        gridPos.gridYPos <= yCenter ? gridPos.gridYPos + yCenter : gridPos.gridYPos - yCenter,
-    };
-  };
-
   draw = function () {
     this.ctx.save();
-    const x = this.mapXPos;
-    const y = this.mapYPos;
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
     this.ctx.drawImage(
       this.img.currentImage,
-      this.walkingMod * frameWidth,
-      this.directionMod * frameHeight,
+      this.getWalkingMod() * frameWidth,
+      this.getDirectionMod() * frameHeight,
       frameWidth,
       frameHeight,
       x,
       y,
-      this.width,
-      this.height
+      this.getWidth(),
+      this.getHeight()
     );
     this.ctx.restore();
   };
 
   updateAnimation = function () {
-    this.animationCounter += 0.5;
-    this.walkingMod = Math.floor(this.animationCounter) % 3;
+    this.setAnimationCounter(this.getAnimationCounter() + 0.5);
+    this.setWalkingMod(Math.floor(this.getAnimationCounter()) % 3);
   };
 
   update = function () {

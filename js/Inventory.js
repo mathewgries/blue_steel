@@ -12,33 +12,78 @@ class Inventory {
     this.itemList = [];
   }
 
-  addItem = function (item) {
-    if (item.type === "rupee" && player.coinCount !== player.maxCoinCount) {
-      if (item.tag === "red_rupee") {
-        player.coinCount += 1;
-      } else if (item.tag === "blue_rupee") {
-        player.coinCount += 3;
-      }
-      if (player.coinCount > player.maxCoinCount) {
-        player.coinCount = player.maxCoinCount;
-      }
-    } else if (item.tag === "heart") {
-      if (player.hp !== player.maxHp) {
-        player.hp += 20;
-      }
-      if (player.hp > player.maxHp) {
-        player.hp = player.maxHp;
-      }
-    } else if (item.tag === "bomb") {
-      if (player.bombCount !== player.maxBombCount) {
-        player.bombCount += 4;
-      }
-      if (player.bombCount > player.maxBombCount) {
-        player.bombCount = player.maxBombCount;
-      }
-    } else {
-      this.itemList.push(item);
+  addItem = function (item, player) {
+    if (item.getType() === "rupee") {
+      this.addRupee(item, player);
+    } else if (item.getType() === "heart") {
+      this.addHeart(player);
+    } else if (item.getType() === "bomb") {
+      this.addBomb(player);
+    } else if (item.getType() === "shield") {
+      this.addShield(item, player);
+    } else if (item.getType() === "sword") {
+      this.addSword(item, player);
     }
+  };
+
+  addRupee = function (item, player) {
+    const tag = item.getTag();
+    let count = player.getCoinCount();
+    const max = player.getMaxCoinCount();
+
+    if (count < max) {
+      if (tag === "red_rupee") {
+        count += 1;
+      } else if (tag === "blue_rupee") {
+        count += 3;
+      }
+
+      if (count >= max) {
+        player.updateCoinCount(max);
+      } else {
+        player.updateCoinCount(count);
+      }
+    }
+  };
+
+  addHeart = function (player) {
+    let hp = player.getHp();
+    const max = player.getMaxHp();
+
+    if (hp < max) {
+      hp += 20;
+      player.updateHp(hp + 20);
+    }
+
+    if (hp >= max) {
+      player.updateHp(max);
+    } else {
+      player.updateHp(hp);
+    }
+  };
+
+  addBomb = function (player) {
+    let count = player.getBombCount();
+    const max = player.getMaxBombCount();
+
+    if (count < max) {
+      count += 4;
+    }
+
+    if (count >= max) {
+      player.updateBombCount(max);
+    } else {
+      player.updateBombCount(count);
+    }
+  };
+
+  addShield = function (item, player) {
+    player.setShield(item);
+  };
+
+  addSword = function (item, player) {
+    player.setSword(item);
+    // itemList[item.itemId].pickedUp = true;
   };
 
   removeItem = function () {};
@@ -91,8 +136,6 @@ class Inventory {
     if (player.equipedItem) {
     }
   };
-
-  updateSwordImg = function () {};
 
   drawSword = function () {
     const sword = itemCollection[player.sword.itemId];
@@ -199,21 +242,105 @@ class Inventory {
 }
 
 class Item {
-  constructor(item, id) {
+  constructor(id, item, ctx, xPos, yPos) {
     this.id = id;
     this.itemId = item.id;
+    this.ctx = ctx;
     this.type = item.type;
     this.tag = item.tag;
     this.name = item.name;
     this.img = new Image();
     this.img.src = item.imgSrc;
+    this.img.dim = TILE_SIZE * SIZE_MULT * item.scale;
+    this.width = TILE_SIZE * SIZE_MULT * item.scale;
+    this.height = TILE_SIZE * SIZE_MULT * item.scale;
     this.imgX = item.imgCoordinates.x;
     this.imgY = item.imgCoordinates.y;
+
+    this.mapXPos = xPos;
+    this.mapYPos = yPos;
+
+    this.toRemove = false;
   }
 
-  draw = function () {};
+  getId = function () {
+    return this.id;
+  };
+
+  getItemId = function () {
+    return this.itemId;
+  };
+
+  getCtx = function () {
+    return this.ctx;
+  };
+
+  getTag = function () {
+    return this.tag;
+  };
+
+  getName = function () {
+    return this.name;
+  };
+
+  getType = function () {
+    return this.type;
+  };
+
+  getImg = function () {
+    return this.img;
+  };
+
+  getWidth = function () {
+    return this.width;
+  };
+
+  getHeight = function () {
+    return this.height;
+  };
+
+  getImgX = function () {
+    return this.imgX;
+  };
+
+  getImgY = function () {
+    return this.imgY;
+  };
+
+  getMapXPos = function () {
+    return this.mapXPos;
+  };
+
+  getMapYPos = function () {
+    return this.mapYPos;
+  };
+
+  setToRemove = function (val) {
+    this.toRemove = val;
+  };
+
+  getToRemove = function () {
+    return this.toRemove;
+  };
+
+  draw = function () {
+    this.getCtx().save();
+
+    this.ctx.drawImage(
+      this.getImg(),
+      this.getImgX() * TILE_SIZE,
+      this.getImgY() * TILE_SIZE,
+      TILE_SIZE,
+      TILE_SIZE,
+      this.getMapXPos(),
+      this.getMapYPos(),
+      this.getWidth(),
+      this.getHeight()
+    );
+    this.getCtx().restore();
+  };
 
   update = function () {
-		
-	};
+    this.draw();
+  };
 }
