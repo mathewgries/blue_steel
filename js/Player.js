@@ -150,6 +150,9 @@ class Player extends Entity {
 
   setPressingAttack = function (val) {
     this.pressingAttack = val;
+		if(val){
+			this.setSwordCoordinates()
+		}
   };
 
   getPressingAttack = function () {
@@ -165,7 +168,6 @@ class Player extends Entity {
   };
 
   setSword = function (item) {
-    // this.sword = item;
     this.sword = {
       itemId: item.itemId,
       img: item.getImg(),
@@ -192,17 +194,17 @@ class Player extends Entity {
     const y = this.getMapYPos();
 
     if (this.getAttackMod() === 0) {
-      sword.mapXPos = x - TILE_SIZE * SIZE_MULT;
-      sword.mapYPos = y;
+      this.getSword().mapXPos = x - TILE_SIZE * SIZE_MULT;
+      this.getSword().mapYPos = y;
     } else if (this.getAttackMod() === 1) {
-      sword.mapXPos = x;
-      sword.mapYPos = y + TILE_SIZE * SIZE_MULT;
+      this.getSword().mapXPos = x;
+      this.getSword().mapYPos = y + TILE_SIZE * SIZE_MULT;
     } else if (this.getAttackMod() === 2) {
-      sword.mapXPos = x;
-      sword.mapYPos = y - TILE_SIZE * SIZE_MULT;
+      this.getSword().mapXPos = x;
+      this.getSword().mapYPos = y - TILE_SIZE * SIZE_MULT;
     } else if (this.getAttackMod() === 3) {
-      sword.mapXPos = x + TILE_SIZE * SIZE_MULT;
-      sword.mapYPos = y;
+      this.getSword().mapXPos = x + TILE_SIZE * SIZE_MULT;
+      this.getSword().mapYPos = y;
     }
   };
 
@@ -216,7 +218,6 @@ class Player extends Entity {
   };
 
   testAttack = function (entity2) {
-		this.setSwordCoordinates()
     const sword = this.getSword();
     var rect1 = {
       x: sword.mapXPos - this.getWidth() / 2,
@@ -382,6 +383,7 @@ class Player extends Entity {
 }
 
 document.onkeydown = function (event) {
+	console.log(event.key)
   if (event.key === "d") {
     player.setPressingRight(true);
   } else if (event.key === "s") {
