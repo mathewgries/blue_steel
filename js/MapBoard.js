@@ -120,17 +120,12 @@ class MapBoard {
     return this.npc;
   };
 
-  getItemList = function () {
-    return this.itemList;
-  };
-
   dropItem = function () {
     if (this.generateItemDropRate()) {
       const selectedRating = this.generateItemSelect();
       for (let key in dropItems) {
         if (dropItems[key].itemRating === selectedRating) {
           return dropItems[key];
-          // this.addDropItem(dropItems[key], entity);
           break;
         }
       }
@@ -153,60 +148,8 @@ class MapBoard {
     }
   };
 
-  generateItemId = function () {
-    return Date.now() + Math.floor(Math.random() * (100 - 1 + 1) + 1);
-  };
-
-  setDefaultItems = function (itemList) {
-    if (itemList) {
-      let items = {};
-      for (let key in itemList) {
-        if (!itemList[key].pickedUp) {
-          const id = this.generateItemId();
-          items[id] = new Item(itemCollection[key], id);
-          items[id].mapX = itemList[key].x;
-          items[id].mapY = itemList[key].y;
-          items[id].isDefault = true;
-        }
-      }
-      return items;
-    } else {
-      return {};
-    }
-  };
-
-  setDefaultItemPickedUp = function (item) {
-    if (item.isDefault) {
-      mapCollection[this.getId()].itemList[item.itemId].pickedUp = true;
-    }
-  };
-
   getGridValue = function (gridXId, gridYId) {
     return this.getMapGrid()[gridYId][gridXId];
-  };
-
-  drawMapItems = function () {
-    const items = this.getItemList();
-    for (let key in items) {
-      const item = items[key];
-      this.getCanvas().getCtx().save();
-      const imgDim = TILE_SIZE * SIZE_MULT;
-
-      this.getCanvas()
-        .getCtx()
-        .drawImage(
-          item.img,
-          item.imgX * TILE_SIZE,
-          item.imgY * TILE_SIZE,
-          TILE_SIZE,
-          TILE_SIZE,
-          item.mapX * TILE_SIZE * SIZE_MULT,
-          item.mapY * TILE_SIZE * SIZE_MULT,
-          imgDim,
-          imgDim
-        );
-      this.getCanvas().getCtx().restore();
-    }
   };
 
   drawNPC = function () {
@@ -238,9 +181,6 @@ class MapBoard {
     if (this.getNpcData()) {
       this.drawNPC();
       this.drawNPCText();
-    }
-    if (this.itemList) {
-      this.drawMapItems();
     }
     this.getCanvas().getCtx().restore();
   };

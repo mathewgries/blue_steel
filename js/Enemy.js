@@ -160,3 +160,9 @@ class Enemy extends Entity {
     }
   };
 }
+
+class BlueBat extends Enemy {
+	constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc){
+		super(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc)
+	}
+}

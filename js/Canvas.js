@@ -11,13 +11,28 @@ class Canvas {
     this.wrapper = document.getElementById(divWrapper);
     this.wrapper.style.width = "" + width + "px";
     this.wrapper.style.height = "" + height + "px";
-    this.ctx.mozImageSmoothingEnabled = false;
-    this.ctx.msImageSmoothingEnabled = false;
-    this.ctx.imageSmoothingEnabled = false;
   }
 
   getCtx = function () {
     return this.ctx;
+  };
+
+  setHidden = function (val) {
+    let hidden = "";
+    let display = "";
+    if (val) {
+      hidden = "hidden";
+      display = "none";
+    } else {
+      hidden = "visible";
+      display = "block";
+    }
+
+    this.canvas.style.visibility = hidden;
+    this.canvas.style.display = display;
+
+    this.wrapper.style.visibility = hidden;
+    this.wrapper.style.display = display;
   };
 
   update = function () {

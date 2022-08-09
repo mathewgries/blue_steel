@@ -387,36 +387,3 @@ class Player extends Entity {
     }
   };
 }
-
-document.onkeydown = function (event) {
-  if (event.key === "d") {
-    player.setPressingRight(true);
-  } else if (event.key === "s") {
-    player.setPressingDown(true);
-  } else if (event.key === "a") {
-    player.setPressingLeft(true);
-  } else if (event.key === "w") {
-    player.setPressingUp(true);
-  } else if (event.key === "l") {
-    if (player.getAttackEnabled() && player.getAttackRelease()) {
-      player.setAttackRelease(false);
-      player.setPressingAttack(true);
-    }
-  } else if (event.key === "p") {
-    paused = !paused;
-  }
-};
-
-document.onkeyup = function (event) {
-  if (event.key === "d") {
-    player.setPressingRight(false);
-  } else if (event.key === "s") {
-    player.setPressingDown(false);
-  } else if (event.key === "a") {
-    player.setPressingLeft(false);
-  } else if (event.key === "w") {
-    player.setPressingUp(false);
-  } else if (event.key === "l") {
-    player.setAttackRelease(true);
-  }
-};
