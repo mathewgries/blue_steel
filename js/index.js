@@ -1,14 +1,4 @@
 //E8rtJMZ36CZsnQV
-const mapCanvas = document.getElementById("mapCanvas");
-const ctxMap = mapCanvas.getContext("2d");
-ctxMap.font = "30px Arial";
-let mapWrapper = document.getElementById("map-wrapper");
-
-const inventoryCanvas = document.getElementById("inventoryCanvas");
-const ctxInventory = inventoryCanvas.getContext("2d");
-ctxInventory.font = "30px Arial";
-const inventoryWrapper = document.getElementById("inventory-wrapper");
-
 const TILE_SIZE = 16;
 const MAP_COLUMNS = 16;
 const MAP_ROWS = 11;
@@ -17,48 +7,37 @@ const SIZE_MULT = 3.5;
 const ratio = MAP_COLUMNS / MAP_ROWS;
 const MAP_WIDTH = TILE_SIZE * MAP_COLUMNS * SIZE_MULT;
 const MAP_HEIGHT = TILE_SIZE * MAP_ROWS * SIZE_MULT;
-mapWrapper.style.width = "" + MAP_WIDTH + "px";
-mapWrapper.style.height = "" + MAP_WIDTH + "px";
 
 const INV_WIDTH = TILE_SIZE * MAP_COLUMNS * SIZE_MULT;
 const INV_HEIGHT = TILE_SIZE * SIZE_MULT * 2;
-inventoryWrapper.style.width = "" + INV_WIDTH + "px";
-inventoryWrapper.style.height = "" + INV_HEIGHT + "px";
-
-renderCanvas = function () {
-  ctxMap.clearRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
-  ctxInventory.clearRect(0, 0, INV_WIDTH, INV_HEIGHT);
-
-  mapCanvas.width = MAP_WIDTH;
-  mapCanvas.height = MAP_HEIGHT;
-  ctxMap.mozImageSmoothingEnabled = false;
-  ctxMap.msImageSmoothingEnabled = false;
-  ctxMap.imageSmoothingEnabled = false;
-
-  inventoryCanvas.width = INV_WIDTH;
-  inventoryCanvas.height = INV_HEIGHT;
-  ctxInventory.mozImageSmoothingEnabled = false;
-  ctxInventory.msImageSmoothingEnabled = false;
-  ctxInventory.imageSmoothingEnabled = false;
-};
 
 let mapCollection;
 let itemCollection;
 let enemyCollection;
+
 let itemList;
 let enemyList;
 const dropItemIdList = ["7", "8", "9", "10"];
 let dropItems = {};
 
+let mapCanvas;
+let inventoryCanvas;
 let inventory;
 let player;
 let START_MAP;
 let currentMap;
 
+renderCanvas = function () {
+  for (let key in canvasList) {
+    canvasList[key].update();
+  }
+};
+
 startGame = function () {
   mapCollection = JSON.parse(JSON.stringify(mapData));
   itemCollection = JSON.parse(JSON.stringify(itemData));
   enemyCollection = JSON.parse(JSON.stringify(enemyData));
+  canvasList = {};
   itemList = {};
   enemyList = {};
   dropItems = {};
@@ -69,10 +48,21 @@ startGame = function () {
     }
   }
 
-  inventory = new Inventory(ctxInventory, INV_WIDTH, INV_HEIGHT);
-  player = new Player(ctxMap, 60, 5);
+  mapCanvas = new Canvas("map", "mapCanvas", "map-wrapper", MAP_WIDTH, MAP_HEIGHT);
+  inventoryCanvas = new Canvas(
+    "inventory",
+    "inventoryCanvas",
+    "inventory-wrapper",
+    INV_WIDTH,
+    INV_HEIGHT
+  );
+  canvasList["map"] = mapCanvas;
+  canvasList["inventory"] = inventoryCanvas;
+
+  inventory = new Inventory(inventoryCanvas, INV_WIDTH, INV_HEIGHT);
+  player = new Player(mapCanvas, 60, 5);
   START_MAP = "start_map_001";
-  currentMap = new MapBoard(START_MAP, ctxMap, "outerworld", 0, INV_HEIGHT);
+  currentMap = new MapBoard(START_MAP, mapCanvas, "outerworld", 0, INV_HEIGHT);
 };
 
 update = function () {

@@ -58,7 +58,7 @@ loadOuterWorldMap = function (player) {
 
   prepareMapData(newMapId);
 
-  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
+  currentMap = new MapBoard(newMapId, mapCanvas, "outerworld", 0, INV_HEIGHT);
 };
 
 isCaveMapTransition = function (player) {
@@ -84,7 +84,7 @@ loadCaveMap = function (caveId, player) {
 
   prepareMapData(caveId);
 
-  currentMap = new MapBoard(caveId, ctxMap, "cave", 0, INV_HEIGHT);
+  currentMap = new MapBoard(caveId, mapCanvas, "cave", 0, INV_HEIGHT);
 };
 
 isExitCaveMap = function (player) {
@@ -122,7 +122,7 @@ exitCaveMap = function (player) {
 
   prepareMapData(newMapId);
 
-  currentMap = new MapBoard(newMapId, ctxMap, "outerworld", 0, INV_HEIGHT);
+  currentMap = new MapBoard(newMapId, mapCanvas, "outerworld", 0, INV_HEIGHT);
 
   player.setMapXPos(playerX);
   player.setMapYPos(playerY);
@@ -148,7 +148,7 @@ loadEnemies = function (enemies) {
       const id = generateId();
       const enemy = new Enemy(
         id,
-        ctxMap,
+        mapCanvas,
         enemyInfo.hp,
         enemyInfo.attackPower,
         generateXSpawn(),
@@ -171,7 +171,7 @@ loadItems = function (items) {
       const item = new Item(
         id,
         itemInfo,
-        ctxMap,
+        mapCanvas,
         generateMapPos(items[key].x),
         generateMapPos(items[key].y)
       );
@@ -182,7 +182,7 @@ loadItems = function (items) {
 
 dropItem = function (newItem, enemy) {
   const id = generateId();
-  const item = new Item(id, newItem, ctxMap, enemy.getMapXPos(), enemy.getMapYPos());
+  const item = new Item(id, newItem, mapCanvas, enemy.getMapXPos(), enemy.getMapYPos());
   itemList[id] = item;
 };
 

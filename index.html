@@ -4,19 +4,23 @@
     <link rel="stylesheet" type="text/css" href="index.css" media="screen" />
   </head>
   <body>
-    <div id="inventory-wrapper">
-      <canvas id="inventoryCanvas"></canvas>
+    <div id="game-board-wrapper">
+      <div id="inventory-wrapper">
+        <canvas id="inventoryCanvas"></canvas>
+      </div>
+      <div id="map-wrapper">
+        <canvas id="mapCanvas"></canvas>
+      </div>
     </div>
-    <div id="map-wrapper">
-      <canvas id="mapCanvas"></canvas>
-    </div>
+
+    <script src="./js/Canvas.js"></script>
     <script src="./js/helper.js"></script>
-		<script src="./data/enemyData.js"></script>
-		<script src="./data/itemData.js"></script>
-		<script src="./data/mapData.js"></script>
+    <script src="./data/enemyData.js"></script>
+    <script src="./data/itemData.js"></script>
+    <script src="./data/mapData.js"></script>
     <script src="./js/MapBoard.js"></script>
     <script src="./js/Entity.js"></script>
-		<script src="./js/Enemy.js"></script>
+    <script src="./js/Enemy.js"></script>
     <script src="./js/Player.js"></script>
     <script src="./js/Inventory.js"></script>
     <script src="./js/index.js"></script>

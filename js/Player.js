@@ -1,6 +1,6 @@
 class Player extends Entity {
-  constructor(ctx, hp, attackPower) {
-    super("player", "player", ctx, hp, attackPower, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
+  constructor(canvas, hp, attackPower) {
+    super("player", "player", canvas, hp, attackPower, MAP_WIDTH / 2, MAP_HEIGHT / 2, 7);
 
     this.img = {};
     this.img.withoutItems = new Image();
@@ -298,13 +298,13 @@ class Player extends Entity {
   };
 
   drawWalking = function () {
-    this.getCtx().save();
+    this.getCanvas().getCtx().save();
     const x = this.getMapXPos();
     const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.img.currentImage,
       this.getWalkingMod() * frameWidth,
       this.getDirectionMod() * frameHeight,
@@ -315,18 +315,18 @@ class Player extends Entity {
       this.getWidth(),
       this.getHeight()
     );
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   drawAttack = function () {
-    this.getCtx().save();
+    this.getCanvas().getCtx().save();
     const sword = this.getSword();
     const x = this.getMapXPos();
     const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 4;
     const frameHeight = this.img.currentImage.height;
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.img.currentImage,
       this.getAttackMod() * frameWidth,
       0,
@@ -338,7 +338,7 @@ class Player extends Entity {
       this.getHeight()
     );
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.sword.img,
       this.getAttackMod() * frameWidth,
       0,
@@ -350,7 +350,7 @@ class Player extends Entity {
       sword.height
     );
 
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {
@@ -383,7 +383,6 @@ class Player extends Entity {
 }
 
 document.onkeydown = function (event) {
-	console.log(event.key)
   if (event.key === "d") {
     player.setPressingRight(true);
   } else if (event.key === "s") {

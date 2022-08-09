@@ -1,8 +1,8 @@
 class Entity {
-  constructor(id, type, ctx, hp, attackPower, xPos, yPos, moveSpd) {
+  constructor(id, type, canvas, hp, attackPower, xPos, yPos, moveSpd) {
     this.id = id;
     this.type = type;
-    this.ctx = ctx;
+    this.canvas = canvas;
     this.hp = hp;
     this.attackPower = attackPower;
     this.mapXPos = xPos;
@@ -48,8 +48,8 @@ class Entity {
     return this.type;
   };
 
-  getCtx = function () {
-    return this.ctx;
+  getCanvas = function () {
+    return this.canvas;
   };
 
   setMapXPos = function (x) {
@@ -411,12 +411,12 @@ class Entity {
   };
 
   draw = function () {
-    this.ctx.save();
+    this.getCanvas().getCtx().save();
     const x = this.getMapXPos();
     const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.img.currentImage,
       this.getWalkingMod() * frameWidth,
       this.getDirectionMod() * frameHeight,
@@ -427,7 +427,7 @@ class Entity {
       this.getWidth(),
       this.getHeight()
     );
-    this.ctx.restore();
+    this.getCanvas().getCtx().restore();
   };
 
   updateAnimation = function () {

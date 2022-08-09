@@ -1,7 +1,7 @@
 class MapBoard {
-  constructor(id, ctx, type, mapX, mapY) {
+  constructor(id, canvas, type, mapX, mapY) {
     this.id = id;
-    this.ctx = ctx;
+    this.canvas = canvas;
     this.type = type;
     this.mapX = mapX;
     this.mapY = mapY;
@@ -9,7 +9,6 @@ class MapBoard {
     this.image = new Image();
     this.image.src = this.map.imgSrc;
     this.npc = this.setNpcData(this.map.npcData);
-    // this.itemList = this.setDefaultItems(this.map.itemList);
   }
 
   setId = function (id) {
@@ -20,12 +19,8 @@ class MapBoard {
     return this.id;
   };
 
-  setCtx = function (ctx) {
-    this.ctx = ctx;
-  };
-
-  getCtx = function () {
-    return this.ctx;
+  getCanvas = function () {
+    return this.canvas;
   };
 
   setType = function (type) {
@@ -194,10 +189,10 @@ class MapBoard {
     const items = this.getItemList();
     for (let key in items) {
       const item = items[key];
-      this.getCtx().save();
+      this.getCanvas().getCtx().save();
       const imgDim = TILE_SIZE * SIZE_MULT;
 
-      this.ctx.drawImage(
+      this.getCanvas().getCtx().drawImage(
         item.img,
         item.imgX * TILE_SIZE,
         item.imgY * TILE_SIZE,
@@ -208,34 +203,34 @@ class MapBoard {
         imgDim,
         imgDim
       );
-      this.getCtx().restore();
+      this.getCanvas().getCtx().restore();
     }
   };
 
   drawNPC = function () {
-    this.getCtx().save();
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().save();
+    this.getCanvas().getCtx().drawImage(
       this.getNpcData().img,
       MAP_WIDTH / 2 - (TILE_SIZE * SIZE_MULT) / 2,
       MAP_HEIGHT / 2 - (TILE_SIZE * SIZE_MULT) / 2,
       TILE_SIZE * SIZE_MULT,
       TILE_SIZE * SIZE_MULT
     );
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   drawNPCText = function () {
-    const metrics = this.getCtx().measureText(this.getNpcData().text);
+    const metrics = this.getCanvas().getCtx().measureText(this.getNpcData().text);
     const textWidth = metrics.width;
     var xPosition = MAP_WIDTH / 2 - textWidth;
-    this.getCtx().font = "24px status-bar";
-    this.getCtx().fillStyle = "white";
-    this.getCtx().fillText(this.getNpcData().text, xPosition, 200);
+    this.getCanvas().getCtx().font = "24px status-bar";
+    this.getCanvas().getCtx().fillStyle = "white";
+    this.getCanvas().getCtx().fillText(this.getNpcData().text, xPosition, 200);
   };
 
   draw = function () {
-    this.getCtx().save();
-    this.ctx.drawImage(this.getMapImg(), 0, 0, MAP_WIDTH, MAP_HEIGHT);
+    this.getCanvas().getCtx().save();
+    this.getCanvas().getCtx().drawImage(this.getMapImg(), 0, 0, MAP_WIDTH, MAP_HEIGHT);
     if (this.getNpcData()) {
       this.drawNPC();
       this.drawNPCText();
@@ -243,7 +238,7 @@ class MapBoard {
     if (this.itemList) {
       this.drawMapItems();
     }
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {
