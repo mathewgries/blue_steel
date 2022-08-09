@@ -1,6 +1,6 @@
 class Enemy extends Entity {
-  constructor(id, ctx, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
-    super(id, "enemy", ctx, hp, attackPower, xPos, yPos, moveSpd);
+  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+    super(id, "enemy", canvas, hp, attackPower, xPos, yPos, moveSpd);
     this.moveSpdX = moveSpd;
     this.moveSpdY = moveSpd;
     this.directionMod = directionMod;
@@ -95,13 +95,13 @@ class Enemy extends Entity {
   };
 
   draw = function () {
-    this.getCtx().save();
+    this.getCanvas().getCtx().save();
     const frameWidth = this.img.width / 4;
     const frameHeight = this.img.height;
     const x = this.getMapXPos();
     const y = this.getMapYPos();
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.img,
       this.getWalkingMod() * frameWidth,
       0,
@@ -112,11 +112,11 @@ class Enemy extends Entity {
       this.getWidth(),
       this.getHeight()
     );
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   drawDeath = function () {
-    this.getCtx().save();
+    this.getCanvas().getCtx().save();
     const frameWidth = this.getDeathAnimation().width / 5;
     const frameHeight = this.getDeathAnimation().height / 2;
     let currentFrame = 0;
@@ -130,7 +130,7 @@ class Enemy extends Entity {
       }
     }
 
-    this.getCtx().drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.getDeathAnimation(),
       currentFrame,
       0,
@@ -142,7 +142,7 @@ class Enemy extends Entity {
       this.getHeight()
     );
 
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {

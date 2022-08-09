@@ -1,6 +1,6 @@
 class Inventory {
-  constructor(ctx, width, height) {
-    this.ctx = ctx;
+  constructor(canvas, width, height) {
+    this.canvas = canvas;
     this.hearts = new Image();
     this.hearts.src = "img/entities/player_hearts.png";
     this.coin = new Image();
@@ -11,6 +11,10 @@ class Inventory {
     this.height = height;
     this.itemList = [];
   }
+
+  getCanvas = function () {
+    return this.canvas;
+  };
 
   addItem = function (item, player) {
     if (item.getType() === "rupee") {
@@ -92,27 +96,29 @@ class Inventory {
     const frameWidth = TILE_SIZE;
     const imgDimension = TILE_SIZE * SIZE_MULT;
 
-    this.ctx.drawImage(
-      this.bomb,
-      0 * TILE_SIZE,
-      TILE_SIZE,
-      frameWidth,
-      frameWidth,
-      243,
-      this.height / 2 - (TILE_SIZE * SIZE_MULT) / 2,
-      imgDimension,
-      imgDimension
-    );
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText("x", 300, 63);
-    this.ctx.fillText(player.bombCount, 320, 65);
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.bomb,
+        0 * TILE_SIZE,
+        TILE_SIZE,
+        frameWidth,
+        frameWidth,
+        243,
+        this.height / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        imgDimension,
+        imgDimension
+      );
+    this.getCanvas().getCtx().fillStyle = "white";
+    this.getCanvas().getCtx().fillText("x", 300, 63);
+    this.getCanvas().getCtx().fillText(player.bombCount, 320, 65);
   };
 
   drawCoinCount = function () {
     const frameWidth = TILE_SIZE;
     const imgDimension = TILE_SIZE * SIZE_MULT;
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.coin,
       1 * TILE_SIZE,
       TILE_SIZE,
@@ -123,16 +129,16 @@ class Inventory {
       imgDimension,
       imgDimension
     );
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText("x", 390, 63);
-    this.ctx.fillText(player.coinCount, 410, 65);
+    this.getCanvas().getCtx().fillStyle = "white";
+    this.getCanvas().getCtx().fillText("x", 390, 63);
+    this.getCanvas().getCtx().fillText(player.coinCount, 410, 65);
   };
 
   drawEquipedItem = function () {
-    this.ctx.fillStyle = "#9b9b9b";
-    this.ctx.fillRect(450, 8.5, 80, 95);
-    this.ctx.fillStyle = "#282828";
-    this.ctx.fillRect(460, 13.5, 60, 85);
+    this.getCanvas().getCtx().fillStyle = "#9b9b9b";
+    this.getCanvas().getCtx().fillRect(450, 8.5, 80, 95);
+    this.getCanvas().getCtx().fillStyle = "#282828";
+    this.getCanvas().getCtx().fillRect(460, 13.5, 60, 85);
     if (player.equipedItem) {
     }
   };
@@ -142,7 +148,7 @@ class Inventory {
     const swordImg = new Image();
     swordImg.src = sword.imgSrc;
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       swordImg,
       (sword.imgCoordinates.x * swordImg.width) / 5,
       sword.imgCoordinates.y,
@@ -156,10 +162,10 @@ class Inventory {
   };
 
   drawMainWeapon = function () {
-    this.ctx.fillStyle = "#9b9b9b";
-    this.ctx.fillRect(550, 8.5, 80, 95);
-    this.ctx.fillStyle = "#282828";
-    this.ctx.fillRect(560, 13.5, 60, 85);
+    this.getCanvas().getCtx().fillStyle = "#9b9b9b";
+    this.getCanvas().getCtx().fillRect(550, 8.5, 80, 95);
+    this.getCanvas().getCtx().fillStyle = "#282828";
+    this.getCanvas().getCtx().fillRect(560, 13.5, 60, 85);
     if (player.sword) {
       this.drawSword();
     }
@@ -169,7 +175,7 @@ class Inventory {
     const frameWidth = this.hearts.width / 2;
     const imgDimension = (this.hearts.width / 2) * 1.5;
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.hearts,
       imgX,
       0,
@@ -183,8 +189,8 @@ class Inventory {
   };
 
   drawLifeMeter = function () {
-    this.ctx.fillStyle = "#a31a1a";
-    this.ctx.fillText("-LIFE-", 740, 35);
+    this.getCanvas().getCtx().fillStyle = "#a31a1a";
+    this.getCanvas().getCtx().fillText("-LIFE-", 740, 35);
     const heartStartX = 680;
     const imgDimension = (this.hearts.width / 2) * 1.5;
     const frameWidth = this.hearts.width / 2;
@@ -220,20 +226,20 @@ class Inventory {
   };
 
   drawBackground = function () {
-    this.ctx.fillStyle = "#282828";
-    this.ctx.fillRect(0, 0, this.width, this.height);
+    this.getCanvas().getCtx().fillStyle = "#282828";
+    this.getCanvas().getCtx().fillRect(0, 0, this.width, this.height);
   };
 
   draw = function () {
-    this.ctx.save();
-    this.ctx.font = "25px Arial";
+    this.getCanvas().getCtx().save();
+    this.getCanvas().getCtx().font = "25px Arial";
     this.drawBackground();
     this.drawMainWeapon();
     this.drawEquipedItem();
     this.drawLifeMeter();
     this.drawCoinCount();
     this.drawBombCount();
-    this.ctx.restore();
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {
@@ -242,10 +248,10 @@ class Inventory {
 }
 
 class Item {
-  constructor(id, item, ctx, xPos, yPos) {
+  constructor(id, item, canvas, xPos, yPos) {
     this.id = id;
     this.itemId = item.id;
-    this.ctx = ctx;
+    this.canvas = canvas;
     this.type = item.type;
     this.tag = item.tag;
     this.name = item.name;
@@ -271,8 +277,8 @@ class Item {
     return this.itemId;
   };
 
-  getCtx = function () {
-    return this.ctx;
+  getCanvas = function () {
+    return this.canvas;
   };
 
   getTag = function () {
@@ -324,9 +330,9 @@ class Item {
   };
 
   draw = function () {
-    this.getCtx().save();
+    this.getCanvas().getCtx().save();
 
-    this.ctx.drawImage(
+    this.getCanvas().getCtx().drawImage(
       this.getImg(),
       this.getImgX() * TILE_SIZE,
       this.getImgY() * TILE_SIZE,
@@ -337,7 +343,7 @@ class Item {
       this.getWidth(),
       this.getHeight()
     );
-    this.getCtx().restore();
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {
