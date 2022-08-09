@@ -7,7 +7,6 @@ class Canvas {
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext("2d");
-
     this.ctx.font = "30px Arial";
     this.wrapper = document.getElementById(divWrapper);
     this.wrapper.style.width = "" + width + "px";

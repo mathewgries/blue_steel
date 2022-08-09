@@ -101,17 +101,19 @@ class Enemy extends Entity {
     const x = this.getMapXPos();
     const y = this.getMapYPos();
 
-    this.getCanvas().getCtx().drawImage(
-      this.img,
-      this.getWalkingMod() * frameWidth,
-      0,
-      frameWidth,
-      frameHeight,
-      x,
-      y,
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.img,
+        this.getWalkingMod() * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
     this.getCanvas().getCtx().restore();
   };
 
@@ -130,17 +132,19 @@ class Enemy extends Entity {
       }
     }
 
-    this.getCanvas().getCtx().drawImage(
-      this.getDeathAnimation(),
-      currentFrame,
-      0,
-      frameWidth,
-      frameHeight,
-      x,
-      y,
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.getDeathAnimation(),
+        currentFrame,
+        0,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
 
     this.getCanvas().getCtx().restore();
   };

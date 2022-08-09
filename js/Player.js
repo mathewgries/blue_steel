@@ -150,9 +150,9 @@ class Player extends Entity {
 
   setPressingAttack = function (val) {
     this.pressingAttack = val;
-		if(val){
-			this.setSwordCoordinates()
-		}
+    if (val) {
+      this.setSwordCoordinates();
+    }
   };
 
   getPressingAttack = function () {
@@ -304,17 +304,19 @@ class Player extends Entity {
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
 
-    this.getCanvas().getCtx().drawImage(
-      this.img.currentImage,
-      this.getWalkingMod() * frameWidth,
-      this.getDirectionMod() * frameHeight,
-      frameWidth,
-      frameHeight,
-      x,
-      y,
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.img.currentImage,
+        this.getWalkingMod() * frameWidth,
+        this.getDirectionMod() * frameHeight,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
     this.getCanvas().getCtx().restore();
   };
 
@@ -326,29 +328,33 @@ class Player extends Entity {
     const frameWidth = this.img.currentImage.width / 4;
     const frameHeight = this.img.currentImage.height;
 
-    this.getCanvas().getCtx().drawImage(
-      this.img.currentImage,
-      this.getAttackMod() * frameWidth,
-      0,
-      frameWidth,
-      frameHeight,
-      x,
-      y,
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.img.currentImage,
+        this.getAttackMod() * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
 
-    this.getCanvas().getCtx().drawImage(
-      this.sword.img,
-      this.getAttackMod() * frameWidth,
-      0,
-      frameWidth,
-      frameHeight,
-      sword.mapXPos,
-      sword.mapYPos,
-      sword.width,
-      sword.height
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.sword.img,
+        this.getAttackMod() * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        sword.mapXPos,
+        sword.mapYPos,
+        sword.width,
+        sword.height
+      );
 
     this.getCanvas().getCtx().restore();
   };

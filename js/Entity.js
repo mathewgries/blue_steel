@@ -416,17 +416,19 @@ class Entity {
     const y = this.getMapYPos();
     const frameWidth = this.img.currentImage.width / 3;
     const frameHeight = this.img.currentImage.height / 4;
-    this.getCanvas().getCtx().drawImage(
-      this.img.currentImage,
-      this.getWalkingMod() * frameWidth,
-      this.getDirectionMod() * frameHeight,
-      frameWidth,
-      frameHeight,
-      x,
-      y,
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.img.currentImage,
+        this.getWalkingMod() * frameWidth,
+        this.getDirectionMod() * frameHeight,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
     this.getCanvas().getCtx().restore();
   };
 

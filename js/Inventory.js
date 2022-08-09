@@ -118,17 +118,19 @@ class Inventory {
     const frameWidth = TILE_SIZE;
     const imgDimension = TILE_SIZE * SIZE_MULT;
 
-    this.getCanvas().getCtx().drawImage(
-      this.coin,
-      1 * TILE_SIZE,
-      TILE_SIZE,
-      frameWidth,
-      frameWidth,
-      340,
-      this.height / 2 - (TILE_SIZE * SIZE_MULT) / 2,
-      imgDimension,
-      imgDimension
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.coin,
+        1 * TILE_SIZE,
+        TILE_SIZE,
+        frameWidth,
+        frameWidth,
+        340,
+        this.height / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        imgDimension,
+        imgDimension
+      );
     this.getCanvas().getCtx().fillStyle = "white";
     this.getCanvas().getCtx().fillText("x", 390, 63);
     this.getCanvas().getCtx().fillText(player.coinCount, 410, 65);
@@ -148,17 +150,19 @@ class Inventory {
     const swordImg = new Image();
     swordImg.src = sword.imgSrc;
 
-    this.getCanvas().getCtx().drawImage(
-      swordImg,
-      (sword.imgCoordinates.x * swordImg.width) / 5,
-      sword.imgCoordinates.y,
-      swordImg.width / 5,
-      swordImg.height,
-      565,
-      20,
-      50,
-      70
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        swordImg,
+        (sword.imgCoordinates.x * swordImg.width) / 5,
+        sword.imgCoordinates.y,
+        swordImg.width / 5,
+        swordImg.height,
+        565,
+        20,
+        50,
+        70
+      );
   };
 
   drawMainWeapon = function () {
@@ -175,17 +179,9 @@ class Inventory {
     const frameWidth = this.hearts.width / 2;
     const imgDimension = (this.hearts.width / 2) * 1.5;
 
-    this.getCanvas().getCtx().drawImage(
-      this.hearts,
-      imgX,
-      0,
-      frameWidth,
-      frameWidth,
-      x,
-      y,
-      imgDimension,
-      imgDimension
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(this.hearts, imgX, 0, frameWidth, frameWidth, x, y, imgDimension, imgDimension);
   };
 
   drawLifeMeter = function () {
@@ -332,17 +328,19 @@ class Item {
   draw = function () {
     this.getCanvas().getCtx().save();
 
-    this.getCanvas().getCtx().drawImage(
-      this.getImg(),
-      this.getImgX() * TILE_SIZE,
-      this.getImgY() * TILE_SIZE,
-      TILE_SIZE,
-      TILE_SIZE,
-      this.getMapXPos(),
-      this.getMapYPos(),
-      this.getWidth(),
-      this.getHeight()
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.getImg(),
+        this.getImgX() * TILE_SIZE,
+        this.getImgY() * TILE_SIZE,
+        TILE_SIZE,
+        TILE_SIZE,
+        this.getMapXPos(),
+        this.getMapYPos(),
+        this.getWidth(),
+        this.getHeight()
+      );
     this.getCanvas().getCtx().restore();
   };
 

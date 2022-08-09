@@ -192,30 +192,34 @@ class MapBoard {
       this.getCanvas().getCtx().save();
       const imgDim = TILE_SIZE * SIZE_MULT;
 
-      this.getCanvas().getCtx().drawImage(
-        item.img,
-        item.imgX * TILE_SIZE,
-        item.imgY * TILE_SIZE,
-        TILE_SIZE,
-        TILE_SIZE,
-        item.mapX * TILE_SIZE * SIZE_MULT,
-        item.mapY * TILE_SIZE * SIZE_MULT,
-        imgDim,
-        imgDim
-      );
+      this.getCanvas()
+        .getCtx()
+        .drawImage(
+          item.img,
+          item.imgX * TILE_SIZE,
+          item.imgY * TILE_SIZE,
+          TILE_SIZE,
+          TILE_SIZE,
+          item.mapX * TILE_SIZE * SIZE_MULT,
+          item.mapY * TILE_SIZE * SIZE_MULT,
+          imgDim,
+          imgDim
+        );
       this.getCanvas().getCtx().restore();
     }
   };
 
   drawNPC = function () {
     this.getCanvas().getCtx().save();
-    this.getCanvas().getCtx().drawImage(
-      this.getNpcData().img,
-      MAP_WIDTH / 2 - (TILE_SIZE * SIZE_MULT) / 2,
-      MAP_HEIGHT / 2 - (TILE_SIZE * SIZE_MULT) / 2,
-      TILE_SIZE * SIZE_MULT,
-      TILE_SIZE * SIZE_MULT
-    );
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.getNpcData().img,
+        MAP_WIDTH / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        MAP_HEIGHT / 2 - (TILE_SIZE * SIZE_MULT) / 2,
+        TILE_SIZE * SIZE_MULT,
+        TILE_SIZE * SIZE_MULT
+      );
     this.getCanvas().getCtx().restore();
   };
 
