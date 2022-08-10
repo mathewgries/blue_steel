@@ -162,7 +162,122 @@ class Enemy extends Entity {
 }
 
 class BlueBat extends Enemy {
-	constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc){
-		super(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc)
-	}
+  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+    super(id, canvas, hp, attackPower, xPos, yPos, 0, directionMod, imgSrc);
+    this.topMovSped = moveSpd;
+    this.moveState = "stopped"; // full, slowing, speedUp, stopped
+    this.restartCounter = 0;
+    this.animationSpeedControl = 0;
+  }
+
+  getTopMoveSpeed = function () {
+    return this.topMovSped;
+  };
+
+  setMoveState = function (val) {
+    this.moveState = val;
+  };
+
+  getMoveState = function () {
+    return this.moveState;
+  };
+
+  setRestartCounter = function (val) {
+    this.restartCounter = val;
+  };
+
+  getRestartCounter = function () {
+    return this.restartCounter;
+  };
+
+  updateRestartCounter = function () {
+    this.setRestartCounter(this.getRestartCounter() + 1);
+  };
+
+  setAnimationSpeedControl = function (val) {
+    this.animationSpeedControl = val;
+  };
+
+  getAnimationSpeedControl = function () {
+    return this.animationSpeedControl;
+  };
+
+  updateAnimationSpeedControl = function () {
+    this.setAnimationSpeedControl(this.getAnimationSpeedControl() + 1);
+  };
+
+  generateRandomStop = function () {
+		if(Math.random() < 0.1){
+			return Math.random() < 0.1;
+		}
+    return false
+  };
+
+  updateAnimationStateControl = function () {
+    if (this.getMoveState() === "stopped") {
+      this.updateRestartCounter(this.getRestartCounter() + 1);
+      if (this.getRestartCounter() === 50) {
+        this.setMoveState("speedUp");
+        this.setRestartCounter(0);
+      }
+    } else if (this.getMoveState() === "speedUp") {
+      this.updateSpeedUp();
+    } else if (this.getMoveState() === "slowing") {
+			this.updateSlowDown()
+    } else if (this.getMoveState() === "full") {
+      if (this.generateRandomStop()) {
+        this.setMoveState("slowing");
+      }
+    }
+  };
+
+  updateSpeedUp = function () {
+    this.updateAnimationSpeedControl(this.getAnimationSpeedControl() + 1);
+    if (this.getAnimationSpeedControl() % 20 === 0) {
+      this.setMoveSpeedX(
+        this.getMoveSpeedX() >= 0 ? this.getMoveSpeedX() + 1 : this.getMoveSpeedX() - 1
+      );
+      this.setMoveSpeedY(
+        this.getMoveSpeedY() >= 0 ? this.getMoveSpeedY() + 1 : this.getMoveSpeedY() - 1
+      );
+      if (
+        this.getMoveSpeedX() === this.getTopMoveSpeed() ||
+        this.getMoveSpeedX() === this.getTopMoveSpeed() * -1
+      ) {
+        this.setMoveState("full");
+        this.setAnimationSpeedControl(0);
+      }
+    }
+  };
+
+	updateSlowDown = function () {
+    this.updateAnimationSpeedControl(this.getAnimationSpeedControl() + 1);
+    if (this.getAnimationSpeedControl() % 20 === 0) {
+      this.setMoveSpeedX(
+        this.getMoveSpeedX() > 0 ? this.getMoveSpeedX() - 1 : this.getMoveSpeedX() + 1
+      );
+      this.setMoveSpeedY(
+        this.getMoveSpeedY() > 0 ? this.getMoveSpeedY() - 1 : this.getMoveSpeedY() + 1
+      );
+      if (this.getMoveSpeedX() === 0) {
+        this.setMoveState("stopped");
+        this.setAnimationSpeedControl(0);
+      }
+    }
+  };
+
+  update = function () {
+    if (this.getToRemove()) {
+      this.setDeathAnimationCounter(this.getDeathAnimationCounter() + 1);
+      this.drawDeath();
+    } else if (this.getMoveState() !== "stopped") {
+      this.updateAnimationStateControl();
+      this.updatePosition();
+      this.updateAnimation();
+      this.draw();
+    } else {
+      this.updateAnimationStateControl();
+      this.draw();
+    }
+  };
 }

@@ -56,7 +56,7 @@ loadOuterWorldMap = function (player) {
     player.setMapYPos(m);
   }
 
-  prepareMapData(newMapId);
+  prepareMapData(newMapId, player);
 
   currentMap = new MapBoard(newMapId, mapCanvas, "outerworld", 0, INV_HEIGHT);
 };
@@ -82,7 +82,7 @@ loadCaveMap = function (caveId, player) {
   player.setMapXPos(MAP_WIDTH / 2 - w / 2);
   player.setMapYPos(MAP_HEIGHT - h - m);
 
-  prepareMapData(caveId);
+  prepareMapData(caveId, player);
 
   currentMap = new MapBoard(caveId, mapCanvas, "cave", 0, INV_HEIGHT);
 };
@@ -120,7 +120,7 @@ exitCaveMap = function (player) {
     playerY = TILE_SIZE * SIZE_MULT * gridYId;
   }
 
-  prepareMapData(newMapId);
+  prepareMapData(newMapId, player);
 
   currentMap = new MapBoard(newMapId, mapCanvas, "outerworld", 0, INV_HEIGHT);
 
@@ -128,11 +128,11 @@ exitCaveMap = function (player) {
   player.setMapYPos(playerY);
 };
 
-prepareMapData = function (newMapId) {
+prepareMapData = function (newMapId, player) {
   enemyList = {};
   itemList = {};
   if (mapCollection[newMapId].enemyData) {
-    loadEnemies(mapCollection[newMapId].enemyData);
+    loadEnemies(mapCollection[newMapId].enemyData, player);
   }
 
   if (mapCollection[newMapId].itemData) {
@@ -140,26 +140,33 @@ prepareMapData = function (newMapId) {
   }
 };
 
-loadEnemies = function (enemies) {
+loadEnemies = function (enemies, player) {
   enemyList = {};
   for (let key in enemies) {
     for (let i = 0; i < enemies[key].count; i++) {
-      const enemyInfo = enemyCollection[key];
-      const id = generateId();
-      const enemy = new Enemy(
-        id,
-        mapCanvas,
-        enemyInfo.hp,
-        enemyInfo.attackPower,
-        generateXSpawn(),
-        generateYSpawn(),
-        enemyInfo.moveSpd,
-        enemyInfo.directionMod,
-        enemyInfo.imgSrc
-      );
-      enemyList[id] = enemy;
+      enemySelector(key, player);
     }
   }
+};
+
+enemySelector = function (key, player) {
+  const id = generateId();
+  let enemy;
+  const enemyInfo = enemyCollection[key];
+  if (key === "1") {
+    enemy = new BlueBat(
+      id,
+      mapCanvas,
+      enemyInfo.hp,
+      enemyInfo.attackPower,
+      generateXSpawn(player),
+      generateYSpawn(player),
+      enemyInfo.moveSpd,
+      enemyInfo.directionMod,
+      enemyInfo.imgSrc
+    );
+  }
+  enemyList[id] = enemy;
 };
 
 loadItems = function (items) {
@@ -199,10 +206,22 @@ generateMapPos = function (gridPos) {
   return gridPos * TILE_SIZE * SIZE_MULT;
 };
 
-generateXSpawn = function () {
-  return Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+generateXSpawn = function (player) {
+  let x;
+  const pX = player.getMapXPos();
+  const minDistance = TILE_SIZE * SIZE_MULT * 5;
+  do {
+    x = Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+  } while (Math.abs(pX - x) < minDistance);
+  return x;
 };
 
-generateYSpawn = function () {
-  return Math.floor(Math.random() * (MAP_HEIGHT - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+generateYSpawn = function (player) {
+  let y;
+  const pY = player.getMapYPos();
+  const minDistance = TILE_SIZE * SIZE_MULT * 5;
+  do {
+    y = Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+  } while (Math.abs(pY - y) < minDistance);
+  return y;
 };
