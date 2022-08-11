@@ -439,7 +439,6 @@ class Entity {
 
   update = function () {
     this.updatePosition();
-
     this.draw();
   };
 }

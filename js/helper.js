@@ -209,8 +209,8 @@ loadItems = function (items) {
         id,
         itemInfo,
         mapCanvas,
-        generateMapPos(items[key].x),
-        generateMapPos(items[key].y)
+        getMapPosId(items[key].x),
+        getMapPosId(items[key].y)
       );
       itemList[id] = item;
     }
@@ -232,7 +232,7 @@ testCollisionRectRect = function (rect1, rect2) {
   );
 };
 
-generateMapPos = function (gridPos) {
+getMapPosId = function (gridPos) {
   return gridPos * TILE_SIZE * SIZE_MULT;
 };
 

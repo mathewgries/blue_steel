@@ -101,24 +101,40 @@ class Enemy extends Entity {
     if (modChange) {
       this.resetDirections();
     } else if (this.movingUp) {
-      this.moveUp();
-      if (this.getMapYPos() === lastY || this.getMapYPos() <= 0) {
+      if (this.getMapYPos() <= 0) {
         this.resetDirections();
+      } else {
+        this.moveUp();
+        if (this.getMapYPos() === lastY) {
+          this.resetDirections();
+        }
       }
     } else if (this.movingDown) {
-      this.moveDown();
-      if (this.getMapYPos() === lastY || this.getMapYPos() >= MAP_HEIGHT - this.getHeight() - this.getMoveSpeed()) {
+      if (this.getMapYPos() >= MAP_HEIGHT - this.getHeight() - this.getMoveSpeed()) {
         this.resetDirections();
+      } else {
+        this.moveDown();
+        if (this.getMapYPos() === lastY) {
+          this.resetDirections();
+        }
       }
     } else if (this.movingRight) {
-      this.moveRight();
-      if (this.getMapXPos() === lastX || this.getMapXPos() >= MAP_WIDTH - this.getWidth()) {
+      if (this.getMapXPos() >= MAP_WIDTH - this.getWidth()) {
         this.resetDirections();
+      } else {
+        this.moveRight();
+        if (this.getMapXPos() === lastX) {
+          this.resetDirections();
+        }
       }
     } else if (this.movingLeft) {
-      this.moveLeft();
-      if (this.getMapXPos() === lastX || this.getMapXPos() <= 0) {
+      if (this.getMapXPos() <= 0) {
         this.resetDirections();
+      } else {
+        this.moveLeft();
+        if (this.getMapXPos() === lastX) {
+          this.resetDirections();
+        }
       }
     }
   };
@@ -393,3 +409,5 @@ class RedHog extends Enemy {
     super(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc);
   }
 }
+
+//********************************************************************************************** */
