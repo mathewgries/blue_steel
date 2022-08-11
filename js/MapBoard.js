@@ -120,7 +120,7 @@ class MapBoard {
     return this.npc;
   };
 
-  dropItem = function () {
+  generateDropItem = function () {
     if (this.generateItemDropRate()) {
       const selectedRating = this.generateItemSelect();
       for (let key in dropItems) {

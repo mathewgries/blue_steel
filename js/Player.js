@@ -188,23 +188,46 @@ class Player extends Entity {
     return this.sword;
   };
 
+  setSwordX = function (val) {
+    this.getSword().mapXPos = val;
+  };
+
+  getSwordX = function () {
+    return this.getSword().mapXPos;
+  };
+
+  setSwordY = function (val) {
+    this.getSword().mapYPos = val;
+  };
+
+  getSwordY = function () {
+    return this.getSword().mapYPos;
+  };
+
+  getSwordWidth = function () {
+    return this.getSword().width;
+  };
+
+  getSwordHeight = function () {
+    return this.getSword().height;
+  };
+
   setSwordCoordinates = function () {
-    const sword = this.getSword();
     const x = this.getMapXPos();
     const y = this.getMapYPos();
 
     if (this.getAttackMod() === 0) {
-      this.getSword().mapXPos = x - TILE_SIZE * SIZE_MULT;
-      this.getSword().mapYPos = y;
+      this.setSwordX(x - TILE_SIZE * SIZE_MULT);
+      this.setSwordY(y);
     } else if (this.getAttackMod() === 1) {
-      this.getSword().mapXPos = x;
-      this.getSword().mapYPos = y + TILE_SIZE * SIZE_MULT;
+      this.setSwordX(x);
+      this.setSwordY(y + TILE_SIZE * SIZE_MULT);
     } else if (this.getAttackMod() === 2) {
-      this.getSword().mapXPos = x;
-      this.getSword().mapYPos = y - TILE_SIZE * SIZE_MULT;
+      this.setSwordX(x);
+      this.setSwordY(y - TILE_SIZE * SIZE_MULT);
     } else if (this.getAttackMod() === 3) {
-      this.getSword().mapXPos = x + TILE_SIZE * SIZE_MULT;
-      this.getSword().mapYPos = y;
+      this.setSwordX(x + TILE_SIZE * SIZE_MULT);
+      this.setSwordY(y);
     }
   };
 
@@ -218,12 +241,16 @@ class Player extends Entity {
   };
 
   testAttack = function (entity2) {
-    const sword = this.getSword();
+    const swordX = this.getSwordX();
+    const swordY = this.getSwordY();
+    const w = this.getSwordWidth();
+    const h = this.getSwordHeight();
+
     var rect1 = {
-      x: sword.mapXPos - this.getWidth() / 2,
-      y: sword.mapYPos - this.getHeight() / 2,
-      width: sword.width,
-      height: sword.height,
+      x: swordX - this.getWidth() / 2,
+      y: swordY - this.getHeight() / 2,
+      width: w,
+      height: h,
     };
     var rect2 = {
       x: entity2.getMapXPos() - entity2.getWidth() / 2,
@@ -370,18 +397,18 @@ class Player extends Entity {
         this.setDamageCounter(0);
       }
     }
-    if (!this.getPressingAttack()) {
-      this.updatePosition();
-      this.drawWalking();
-    } else if (this.getPressingAttack()) {
+    if (this.getPressingAttack() || this.getAttackFrameCounter() > 0) {
+			this.setPressingAttack(false);
       this.setAttackFrameCounter(this.getAttackFrameCounter() + 1);
       this.img.currentImage = this.img.attack;
       this.drawAttack();
       if (this.getAttackFrameCounter() > 5) {
-        this.setPressingAttack(false);
         this.img.currentImage = this.img.withShield;
         this.setAttackFrameCounter(0);
       }
+    } else if (!this.getPressingAttack()) {
+      this.updatePosition();
+      this.drawWalking();
     } else {
       this.drawWalking();
     }

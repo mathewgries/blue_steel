@@ -53,13 +53,21 @@ class Enemy extends Entity {
     return this.deathAnimationCounter;
   };
 
+  takeDamage = function (player) {
+    this.setHp(this.getHp() - player.getAttackPower());
+  };
+
+	damageThrow = function(player){
+		
+	}
+
   onDeath = function () {
     this.setToRemove(true);
     this.setAttackPower(0);
     this.setDeathAnimation("img/entities/enemy_death_animation.png");
   };
 
-  startMovement = function () {
+  setDirection = function () {
     const n = Math.random();
     if (n <= 0.25) {
       this.movingUp = true;
@@ -139,28 +147,6 @@ class Enemy extends Entity {
     }
   };
 
-  draw = function () {
-    this.getCanvas().getCtx().save();
-    const x = this.getMapXPos();
-    const y = this.getMapYPos();
-    const frameWidth = this.img.width / 3;
-    const frameHeight = this.img.height / 4;
-    this.getCanvas()
-      .getCtx()
-      .drawImage(
-        this.img,
-        this.getWalkingMod() * frameWidth,
-        this.getDirectionMod() * frameHeight,
-        frameWidth,
-        frameHeight,
-        x,
-        y,
-        this.getWidth(),
-        this.getHeight()
-      );
-    this.getCanvas().getCtx().restore();
-  };
-
   drawDeath = function () {
     this.getCanvas().getCtx().save();
     const frameWidth = this.getDeathAnimation().width / 5;
@@ -195,7 +181,7 @@ class Enemy extends Entity {
 
   update = function () {
     if (!this.checkingMoving()) {
-      this.startMovement();
+      this.setDirection();
     }
     if (this.getToRemove()) {
       this.setDeathAnimationCounter(this.getDeathAnimationCounter() + 1);
