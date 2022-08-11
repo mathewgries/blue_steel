@@ -414,12 +414,12 @@ class Entity {
     this.getCanvas().getCtx().save();
     const x = this.getMapXPos();
     const y = this.getMapYPos();
-    const frameWidth = this.img.currentImage.width / 3;
-    const frameHeight = this.img.currentImage.height / 4;
+    const frameWidth = this.img.width / 3;
+    const frameHeight = this.img.height / 4;
     this.getCanvas()
       .getCtx()
       .drawImage(
-        this.img.currentImage,
+        this.img,
         this.getWalkingMod() * frameWidth,
         this.getDirectionMod() * frameHeight,
         frameWidth,

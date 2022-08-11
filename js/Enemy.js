@@ -1,9 +1,7 @@
 class Enemy extends Entity {
-  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, changeDirectionMod, imgSrc) {
     super(id, "enemy", canvas, hp, attackPower, xPos, yPos, moveSpd);
-    this.moveSpdX = moveSpd;
-    this.moveSpdY = moveSpd;
-    this.directionMod = directionMod;
+    this.changeDirectionMod = changeDirectionMod;
     this.img = new Image();
     this.img.src = imgSrc;
 
@@ -11,22 +9,15 @@ class Enemy extends Entity {
     this.doRemove = false;
     this.deathAnimation = null;
     this.deathAnimationCounter = 0;
+
+    this.movingUp = false;
+    this.movingDown = false;
+    this.movingRight = false;
+    this.movingLeft = false;
   }
 
-  setMoveSpeedX = function (val) {
-    this.moveSpdX = val;
-  };
-
-  getMoveSpeedX = function () {
-    return this.moveSpdX;
-  };
-
-  setMoveSpeedY = function (val) {
-    this.moveSpdY = val;
-  };
-
-  getMoveSpeedY = function () {
-    return this.moveSpdY;
+  getChangeDirectionMod = function () {
+    return this.changeDirectionMod;
   };
 
   setToRemove = function (val) {
@@ -68,45 +59,82 @@ class Enemy extends Entity {
     this.setDeathAnimation("img/entities/enemy_death_animation.png");
   };
 
-  randomDirectionMod = function () {
-    return Math.floor(Math.random() * (this.getDirectionMod() - 0 + 1) + 0);
+  startMovement = function () {
+    const n = Math.random();
+    if (n <= 0.25) {
+      this.movingUp = true;
+    } else if (n <= 0.5) {
+      this.movingDown = true;
+    } else if (n <= 0.75) {
+      this.movingRight = true;
+    } else {
+      this.movingLeft = true;
+    }
+  };
+
+  checkingMoving = function () {
+    return this.movingUp || this.movingDown || this.movingRight || this.movingLeft;
+  };
+
+  randomChangeDirectionMod = function () {
+    return Math.floor(Math.random() * (this.getChangeDirectionMod() - 0 + 1) + 0);
+  };
+
+  resetDirections = function () {
+    if (this.movingUp) {
+      this.movingUp = false;
+    } else if (this.movingDown) {
+      this.movingDown = false;
+    } else if (this.movingRight) {
+      this.movingRight = false;
+    } else if (this.movingLeft) {
+      this.movingLeft = false;
+    }
   };
 
   updatePosition = function () {
-    let modChangeX = false;
-    let modChangeY = false;
-    const x = this.getMapXPos();
-    const y = this.getMapYPos();
-    const w = this.getWidth();
-    const h = this.getHeight();
+    const lastX = this.getMapXPos();
+    const lastY = this.getMapYPos();
+    const rd = this.randomChangeDirectionMod();
+    const modChange = rd < this.getChangeDirectionMod() * 0.0125 ? true : false;
 
-    modChangeX = this.randomDirectionMod() < this.getDirectionMod() * 0.0125 ? true : false;
-    modChangeY = this.randomDirectionMod() < this.getDirectionMod() * 0.0125 ? true : false;
-
-    if (x <= 0 || x >= MAP_WIDTH - w || modChangeX) {
-      this.setMoveSpeedX(this.getMoveSpeedX() * -1);
+    if (modChange) {
+      this.resetDirections();
+    } else if (this.movingUp) {
+      this.moveUp();
+      if (this.getMapYPos() === lastY || this.getMapYPos() <= 0) {
+        this.resetDirections();
+      }
+    } else if (this.movingDown) {
+      this.moveDown();
+      if (this.getMapYPos() === lastY || this.getMapYPos() >= MAP_HEIGHT - this.getHeight() - this.getMoveSpeed()) {
+        this.resetDirections();
+      }
+    } else if (this.movingRight) {
+      this.moveRight();
+      if (this.getMapXPos() === lastX || this.getMapXPos() >= MAP_WIDTH - this.getWidth()) {
+        this.resetDirections();
+      }
+    } else if (this.movingLeft) {
+      this.moveLeft();
+      if (this.getMapXPos() === lastX || this.getMapXPos() <= 0) {
+        this.resetDirections();
+      }
     }
-
-    if (y <= 0 || y >= MAP_HEIGHT - h || modChangeY) {
-      this.setMoveSpeedY(this.getMoveSpeedY() * -1);
-    }
-    this.setMapXPos(x + this.getMoveSpeedX());
-    this.setMapYPos(y + this.getMoveSpeedY());
   };
 
   draw = function () {
     this.getCanvas().getCtx().save();
-    const frameWidth = this.img.width / 4;
-    const frameHeight = this.img.height;
     const x = this.getMapXPos();
     const y = this.getMapYPos();
-
+    const frameWidth = this.img.width / 3;
+    const frameHeight = this.img.height / 4;
     this.getCanvas()
       .getCtx()
       .drawImage(
         this.img,
         this.getWalkingMod() * frameWidth,
-        0,
+        this.getDirectionMod() * frameHeight,
         frameWidth,
         frameHeight,
         x,
@@ -150,6 +178,9 @@ class Enemy extends Entity {
   };
 
   update = function () {
+    if (!this.checkingMoving()) {
+      this.startMovement();
+    }
     if (this.getToRemove()) {
       this.setDeathAnimationCounter(this.getDeathAnimationCounter() + 1);
       this.drawDeath();
@@ -161,14 +192,34 @@ class Enemy extends Entity {
   };
 }
 
+//********************************************************************************************** */
+
 class BlueBat extends Enemy {
   constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
     super(id, canvas, hp, attackPower, xPos, yPos, 0, directionMod, imgSrc);
+    this.moveSpdX = 0;
+    this.moveSpdY = 0;
     this.topMovSped = moveSpd;
     this.moveState = "stopped"; // full, slowing, speedUp, stopped
     this.restartCounter = 0;
     this.animationSpeedControl = 0;
   }
+
+  setMoveSpeedX = function (val) {
+    this.moveSpdX = val;
+  };
+
+  getMoveSpeedX = function () {
+    return this.moveSpdX;
+  };
+
+  setMoveSpeedY = function (val) {
+    this.moveSpdY = val;
+  };
+
+  getMoveSpeedY = function () {
+    return this.moveSpdY;
+  };
 
   getTopMoveSpeed = function () {
     return this.topMovSped;
@@ -207,10 +258,34 @@ class BlueBat extends Enemy {
   };
 
   generateRandomStop = function () {
-		if(Math.random() < 0.1){
-			return Math.random() < 0.1;
-		}
-    return false
+    if (Math.random() < 0.1) {
+      return Math.random() < 0.1;
+    }
+    return false;
+  };
+
+  updatePosition = function () {
+    let modChangeX = false;
+    let modChangeY = false;
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
+    const w = this.getWidth();
+    const h = this.getHeight();
+
+    modChangeX =
+      this.randomChangeDirectionMod() < this.getChangeDirectionMod() * 0.0125 ? true : false;
+    modChangeY =
+      this.randomChangeDirectionMod() < this.getChangeDirectionMod() * 0.0125 ? true : false;
+
+    if (x <= 0 || x >= MAP_WIDTH - w || modChangeX) {
+      this.setMoveSpeedX(this.getMoveSpeedX() * -1);
+    }
+
+    if (y <= 0 || y >= MAP_HEIGHT - h || modChangeY) {
+      this.setMoveSpeedY(this.getMoveSpeedY() * -1);
+    }
+    this.setMapXPos(x + this.getMoveSpeedX());
+    this.setMapYPos(y + this.getMoveSpeedY());
   };
 
   updateAnimationStateControl = function () {
@@ -223,7 +298,7 @@ class BlueBat extends Enemy {
     } else if (this.getMoveState() === "speedUp") {
       this.updateSpeedUp();
     } else if (this.getMoveState() === "slowing") {
-			this.updateSlowDown()
+      this.updateSlowDown();
     } else if (this.getMoveState() === "full") {
       if (this.generateRandomStop()) {
         this.setMoveState("slowing");
@@ -250,7 +325,7 @@ class BlueBat extends Enemy {
     }
   };
 
-	updateSlowDown = function () {
+  updateSlowDown = function () {
     this.updateAnimationSpeedControl(this.getAnimationSpeedControl() + 1);
     if (this.getAnimationSpeedControl() % 20 === 0) {
       this.setMoveSpeedX(
@@ -264,6 +339,29 @@ class BlueBat extends Enemy {
         this.setAnimationSpeedControl(0);
       }
     }
+  };
+
+  draw = function () {
+    this.getCanvas().getCtx().save();
+    const frameWidth = this.img.width / 4;
+    const frameHeight = this.img.height;
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
+
+    this.getCanvas()
+      .getCtx()
+      .drawImage(
+        this.img,
+        this.getWalkingMod() * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        x,
+        y,
+        this.getWidth(),
+        this.getHeight()
+      );
+    this.getCanvas().getCtx().restore();
   };
 
   update = function () {
@@ -280,4 +378,18 @@ class BlueBat extends Enemy {
       this.draw();
     }
   };
+}
+
+//********************************************************************************************** */
+
+class BlueHog extends Enemy {
+  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+    super(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc);
+  }
+}
+
+class RedHog extends Enemy {
+  constructor(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc) {
+    super(id, canvas, hp, attackPower, xPos, yPos, moveSpd, directionMod, imgSrc);
+  }
 }

@@ -131,38 +131,68 @@ exitCaveMap = function (player) {
 prepareMapData = function (newMapId, player) {
   enemyList = {};
   itemList = {};
-  if (mapCollection[newMapId].enemyData) {
-    loadEnemies(mapCollection[newMapId].enemyData, player);
+  const newMap = mapCollection[newMapId];
+  if (newMap.enemyData) {
+    loadEnemies(newMap, player);
   }
 
-  if (mapCollection[newMapId].itemData) {
-    loadItems(mapCollection[newMapId].itemData);
+  if (newMap.itemData) {
+    loadItems(newMap.itemData);
   }
 };
 
-loadEnemies = function (enemies, player) {
+loadEnemies = function (newMap, player) {
   enemyList = {};
+  const enemies = newMap.enemyData;
+
   for (let key in enemies) {
     for (let i = 0; i < enemies[key].count; i++) {
-      enemySelector(key, player);
+      enemySelector(key, player, newMap.mapGrid);
     }
   }
 };
 
-enemySelector = function (key, player) {
+enemySelector = function (key, player, mapGrid) {
   const id = generateId();
   let enemy;
   const enemyInfo = enemyCollection[key];
   if (key === "1") {
+    const pos = generateSpawnPosAny(player);
     enemy = new BlueBat(
       id,
       mapCanvas,
       enemyInfo.hp,
       enemyInfo.attackPower,
-      generateXSpawn(player),
-      generateYSpawn(player),
+      pos.x,
+      pos.y,
       enemyInfo.moveSpd,
-      enemyInfo.directionMod,
+      enemyInfo.changeDirectionMod,
+      enemyInfo.imgSrc
+    );
+  } else if (key === "2") {
+    const pos = generateSpawnNonWall(player, mapGrid);
+    enemy = new BlueHog(
+      id,
+      mapCanvas,
+      enemyInfo.hp,
+      enemyInfo.attackPower,
+      pos.x,
+      pos.y,
+      enemyInfo.moveSpd,
+      enemyInfo.changeDirectionMod,
+      enemyInfo.imgSrc
+    );
+  } else if (key === "3") {
+    const pos = generateSpawnNonWall(player, mapGrid);
+    enemy = new RedHog(
+      id,
+      mapCanvas,
+      enemyInfo.hp,
+      enemyInfo.attackPower,
+      pos.x,
+      pos.y,
+      enemyInfo.moveSpd,
+      enemyInfo.changeDirectionMod,
       enemyInfo.imgSrc
     );
   }
@@ -206,22 +236,46 @@ generateMapPos = function (gridPos) {
   return gridPos * TILE_SIZE * SIZE_MULT;
 };
 
-generateXSpawn = function (player) {
+generateSpawnPosAny = function (player) {
   let x;
+  let y;
   const pX = player.getMapXPos();
+  const pY = player.getMapYPos();
   const minDistance = TILE_SIZE * SIZE_MULT * 5;
+
   do {
     x = Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
   } while (Math.abs(pX - x) < minDistance);
-  return x;
+  do {
+    y = Math.floor(Math.random() * (MAP_HEIGHT - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+  } while (Math.abs(pY - y) < minDistance);
+
+  return { x, y };
 };
 
-generateYSpawn = function (player) {
+generateSpawnNonWall = function (player, mapGrid) {
+  let x;
   let y;
+  const pX = player.getMapXPos();
   const pY = player.getMapYPos();
   const minDistance = TILE_SIZE * SIZE_MULT * 5;
+  let xId;
+  let yId;
+
   do {
-    y = Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
-  } while (Math.abs(pY - y) < minDistance);
-  return y;
+    do {
+      x = Math.floor(Math.random() * (MAP_WIDTH - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+      x = x - (x % (TILE_SIZE * SIZE_MULT));
+    } while (Math.abs(pX - x) < minDistance);
+
+    do {
+      y = Math.floor(Math.random() * (MAP_HEIGHT - TILE_SIZE * SIZE_MULT - 1 - 0 + 1) + 0);
+      y = y - (y % (TILE_SIZE * SIZE_MULT));
+    } while (Math.abs(pY - y) < minDistance);
+
+    xId = Math.floor(x / (TILE_SIZE * SIZE_MULT));
+    yId = Math.floor(y / (TILE_SIZE * SIZE_MULT));
+  } while (mapGrid[yId][xId] !== 2);
+
+  return { x, y };
 };
