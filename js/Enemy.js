@@ -57,9 +57,13 @@ class Enemy extends Entity {
     this.setHp(this.getHp() - player.getAttackPower());
   };
 
-	damageThrow = function(player){
-		
-	}
+  damageThrow = function (player) {
+    const px = player.getMapXPos();
+    const py = player.getMapYPos();
+    const x = this.getMapXPos();
+    const y = this.getMapYPos();
+    
+  };
 
   onDeath = function () {
     this.setToRemove(true);

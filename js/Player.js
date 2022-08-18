@@ -390,6 +390,7 @@ class Player extends Entity {
     if (this.getHp() <= 0) {
       startGame();
     }
+
     if (this.getTookDamage()) {
       this.setDamageCounter(this.getDamageCounter() + 1);
       if (this.getDamageCounter() > 5) {
@@ -397,20 +398,28 @@ class Player extends Entity {
         this.setDamageCounter(0);
       }
     }
-    if (this.getPressingAttack() || this.getAttackFrameCounter() > 0) {
-			this.setPressingAttack(false);
+
+    if (this.getPressingAttack()) {
       this.setAttackFrameCounter(this.getAttackFrameCounter() + 1);
       this.img.currentImage = this.img.attack;
+      this.setPressingAttack(false);
+      this.drawAttack();
+    }
+
+    if (this.getAttackFrameCounter() > 0) {
+      this.setAttackFrameCounter(this.getAttackFrameCounter() + 1);
       this.drawAttack();
       if (this.getAttackFrameCounter() > 5) {
-        this.img.currentImage = this.img.withShield;
         this.setAttackFrameCounter(0);
+        this.img.currentImage = this.img.withShield;
       }
-    } else if (!this.getPressingAttack()) {
+    }
+
+    if (!this.getPressingAttack() && this.getAttackFrameCounter() === 0) {
       this.updatePosition();
       this.drawWalking();
-    } else {
-      this.drawWalking();
     }
+
+    
   };
 }

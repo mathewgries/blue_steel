@@ -116,7 +116,7 @@ update = function () {
           player.processEnemyAttack(enemy);
         }
         if (player.pressingAttack && player.testAttack(enemy)) {
-					enemy.takeDamage(player)
+          enemy.takeDamage(player);
           if (enemy.getHp() <= 0) {
             enemy.onDeath();
           }
@@ -176,13 +176,14 @@ document.onkeydown = function (event) {
   } else if (event.key === "w") {
     player.setPressingUp(true);
   } else if (event.key === "l") {
-		if (player.getAttackEnabled()) {
+    if (
+      player.getAttackEnabled() &&
+      player.getAttackFrameCounter() === 0 &&
+      player.getAttackRelease()
+    ) {
+      player.setAttackRelease(false);
       player.setPressingAttack(true);
     }
-    // if (player.getAttackEnabled() && player.getAttackRelease()) {
-    //   player.setAttackRelease(false);
-    //   player.setPressingAttack(true);
-    // }
   } else if (event.key === "p") {
     paused = !paused;
   } else if (event.key === "Enter") {
@@ -199,8 +200,7 @@ document.onkeyup = function (event) {
     player.setPressingLeft(false);
   } else if (event.key === "w") {
     player.setPressingUp(false);
-  } 
-	// else if (event.key === "l") {
-  //   player.setAttackRelease(true);
-  // }
+  } else if (event.key === "l") {
+    player.setAttackRelease(true);
+  }
 };
